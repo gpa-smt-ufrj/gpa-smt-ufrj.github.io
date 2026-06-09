@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Extracting accent features in spoken Brazilian Portuguese — Companion Page</title>
-  <meta name="description" content="Companion page for arXiv:2605.30457 — Extracting accent features in spoken Brazilian Portuguese without sociolinguistic labels (SBrT 2026).">
+  <title>Extracting accent features in spoken Brazilian Portuguese | Companion Page</title>
+  <meta name="description" content="Companion page for the paper submitted to SBrT 2026: Extracting accent features in spoken Brazilian Portuguese without sociolinguistic labels.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,7 +18,7 @@
     Luiz W. P. Biscainho (DEL/Poli &amp; PEE/COPPE, UFRJ)
   </p>
   <p class="subtitle">
-    Companion page &mdash; submitted to SBrT 2026 (XLIV Brazilian Symposium on Telecommunications and Signal Processing) &middot; <a href="https://arxiv.org/abs/2605.30457">arXiv:2605.30457</a>
+    Companion page for the paper submitted to SBrT 2026 (XLIV Brazilian Symposium on Telecommunications and Signal Processing)
   </p>
   <div class="btn-row">
     <a class="btn" href="https://arxiv.org/abs/2605.30457" target="_blank" rel="noopener">arXiv</a>
@@ -31,7 +31,7 @@
 <section>
   <h2>Overview</h2>
   <div class="overview">
-    <p>Regional accent classification in Brazilian Portuguese suffers from unreliable sociolinguistic labels, and large self-supervised (SSL) speech models dilute sociophonetic information across their latent spaces. This work introduces a purely audio-driven pipeline: a phoneme-based forced aligner (ZIPA) localizes specific accent markers — <em>/s/ coda</em>, <em>/r/ coda</em>, and <em>/d/–/t/ palatalization</em> — and low-dimensional features extracted at exactly those instants classify how each speaker realizes them. The resulting localized features are interpretable, computationally lightweight, and competitive with (or better than) large pretrained embeddings on accent-related tasks.</p>
+    <p>Regional accent classification in Brazilian Portuguese suffers from unreliable sociolinguistic labels, and large self-supervised (SSL) speech models dilute sociophonetic information across their latent spaces. This work introduces a purely audio-driven pipeline: a phoneme-based forced aligner (ZIPA) localizes specific accent markers (<em>/s/ coda</em>, <em>/r/ coda</em>, and <em>/d/–/t/ palatalization</em>), and low-dimensional features extracted at exactly those instants classify how each speaker realizes them. The resulting localized features are interpretable, computationally lightweight, and competitive with (or better than) large pretrained embeddings on accent-related tasks.</p>
   </div>
 </section>
 
@@ -47,17 +47,17 @@
 
     <div class="rq-card">
       <strong>Which features capture each marker best?</strong>
-      <p>ZIPA phone-probability logits are the strongest single ingredient &mdash; alone they are perfect on /s/ coda, and the winning sets for the other tasks all include them. Optimal analysis windows are feature- and task-specific (e.g., spectral moments use a narrow 40 ms post-onset window for /s/ and /r/ coda, while /d/–/t/ needs the full 160 ms consonant-vowel transition). The complete feature × task ablation is shown in the <a href="#ablation">interactive table</a> below.</p>
+      <p>ZIPA phone-probability logits are the strongest single ingredient: alone they are perfect on /s/ coda, and the winning sets for the other tasks all include them. Optimal analysis windows are feature- and task-specific (e.g., spectral moments use a narrow 40 ms post-onset window for /s/ and /r/ coda, while /d/–/t/ needs the full 160 ms consonant-vowel transition). The complete feature × task ablation is shown in the <a href="#ablation">interactive table</a> below.</p>
     </div>
 
     <div class="rq-card">
       <strong>Does localization matter, or are whole-utterance embeddings enough?</strong>
-      <p>Localization matters a lot. Mean-pooled whole-utterance embeddings from SoTA SSL models top out at 0.85 / 0.57 / 0.73 speaker accuracy for the three tasks, versus <span class="highlight">1.00 / 0.85 / 0.88</span> for the proposed aligned features &mdash; evidence of the &ldquo;information dilution&rdquo; that occurs when accent cues are averaged across the full utterance.</p>
+      <p>Localization matters a lot. Mean-pooled whole-utterance embeddings from SoTA SSL models top out at 0.85 / 0.57 / 0.73 speaker accuracy for the three tasks, versus <span class="highlight">1.00 / 0.85 / 0.88</span> for the proposed aligned features, showing the &ldquo;information dilution&rdquo; that occurs when accent cues are averaged across the full utterance.</p>
     </div>
 
     <div class="rq-card">
       <strong>Are these compact features useful for actual accent detection?</strong>
-      <p>Yes. A 7-dimensional vector of marker-class probabilities with logistic regression achieves <span class="highlight">82%</span> overall F1 on cross-dataset binary PE vs. SP classification, versus 75% for fine-tuned XLSR-53. On a 4-class task (Northeast / RJ / SP / MG) the proposed features reach macro F1 <span class="highlight">0.83 ± 0.02</span> &mdash; on par with the best SSL embeddings (0.84) at roughly 1/100th the dimensionality, with interpretable coefficients that align with the ALiB linguistic atlas.</p>
+      <p>Yes. A 7-dimensional vector of marker-class probabilities with logistic regression achieves <span class="highlight">82%</span> overall F1 on cross-dataset binary PE vs. SP classification, versus 75% for fine-tuned XLSR-53. On a 4-class task (Northeast / RJ / SP / MG) the proposed features reach macro F1 <span class="highlight">0.83 ± 0.02</span>, on par with the best SSL embeddings (0.84) at roughly 1/100th the dimensionality, with interpretable coefficients that align with the ALiB linguistic atlas.</p>
     </div>
 
   </div>
@@ -75,7 +75,7 @@
     <tbody>
       <tr><td rowspan="2">/s/ coda</td><td>Chiado</td><td class="ipa">[ʃ]</td><td>Rio de Janeiro, Florianópolis, Belém</td></tr>
       <tr>                             <td>Sibilant</td><td class="ipa">[s]</td><td>São Paulo, South</td></tr>
-      <tr><td rowspan="3">/r/ coda</td><td>Carioca</td><td class="ipa">[ʁ] / [x] / [h]</td><td>Rio de Janeiro, Fluminense</td></tr>
+      <tr><td rowspan="3">/r/ coda</td><td>Carioca</td><td class="ipa">[x] / [h]</td><td>Rio de Janeiro, Fluminense</td></tr>
       <tr>                             <td>Tap</td>    <td class="ipa">[ɾ]</td><td>São Paulo (city), Porto Alegre</td></tr>
       <tr>                             <td>Caipira</td><td class="ipa">[ɻ]</td><td>Interior São Paulo, Paraná, Goiás</td></tr>
       <tr><td rowspan="2">/d/–/t/ + /i/</td><td>Palatalized</td>    <td class="ipa">[dʒⁱ] / [tʃⁱ]</td><td>Rio de Janeiro, São Paulo, Minas Gerais</td></tr>
@@ -88,7 +88,7 @@
 <section>
   <h2>Listen: Marker Realizations</h2>
   <p style="font-size:.85rem;color:#555;margin-bottom:1.2rem;">
-    Each clip is a 160 ms window centered on a ZIPA-detected phoneme spike &mdash; the exact unit used for feature extraction in the paper.
+    Each clip is a 160 ms window centered on a ZIPA-detected phoneme spike, the exact unit used for feature extraction in the paper.
     Use the 0.5&times; button to slow playback for easier perception.
   </p>
 
@@ -106,7 +106,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/s_coda_chiado_1.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/s_coda_chiado_1.wav" data-rate="0.5">0.5&#215;</button>
-          <span>chiado [ʃ] — #1</span>
+          <span>chiado [ʃ] &middot; #1</span>
         </div>
       </figure>
       <figure class="clip">
@@ -114,7 +114,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/s_coda_chiado_2.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/s_coda_chiado_2.wav" data-rate="0.5">0.5&#215;</button>
-          <span>chiado [ʃ] — #2</span>
+          <span>chiado [ʃ] &middot; #2</span>
         </div>
       </figure>
       <figure class="clip">
@@ -122,7 +122,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/s_coda_chiado_3.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/s_coda_chiado_3.wav" data-rate="0.5">0.5&#215;</button>
-          <span>chiado [ʃ] — #3</span>
+          <span>chiado [ʃ] &middot; #3</span>
         </div>
       </figure>
     </div>
@@ -133,7 +133,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/s_coda_sibilant_1.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/s_coda_sibilant_1.wav" data-rate="0.5">0.5&#215;</button>
-          <span>sibilant [s] — #1</span>
+          <span>sibilant [s] &middot; #1</span>
         </div>
       </figure>
       <figure class="clip">
@@ -141,7 +141,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/s_coda_sibilant_2.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/s_coda_sibilant_2.wav" data-rate="0.5">0.5&#215;</button>
-          <span>sibilant [s] — #2</span>
+          <span>sibilant [s] &middot; #2</span>
         </div>
       </figure>
       <figure class="clip">
@@ -149,7 +149,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/s_coda_sibilant_3.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/s_coda_sibilant_3.wav" data-rate="0.5">0.5&#215;</button>
-          <span>sibilant [s] — #3</span>
+          <span>sibilant [s] &middot; #3</span>
         </div>
       </figure>
     </div>
@@ -160,7 +160,7 @@
   <div class="marker-section">
     <h3>/r/ Coda</h3>
     <p class="listening-hint">
-      <strong>What to listen for:</strong> <em>carioca</em> sounds like a breathy velar or glottal fricative (similar to German &ldquo;ch&rdquo;); <em>tap</em> is a quick flap similar to the British English &ldquo;r&rdquo; in &ldquo;very&rdquo;; <em>caipira</em> is the retroflexed &ldquo;r&rdquo; of interior São Paulo &mdash; colored and retroflex.
+      <strong>What to listen for:</strong> <em>carioca</em> sounds like a breathy velar or glottal fricative (similar to German &ldquo;ch&rdquo;); <em>tap</em> is a quick flap similar to the British English &ldquo;r&rdquo; in &ldquo;very&rdquo;; <em>caipira</em> is the retroflexed &ldquo;r&rdquo; of interior São Paulo, colored and retroflex.
     </p>
     <div class="class-grid">
     <div class="class-col">
@@ -170,7 +170,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_carioca_1.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_carioca_1.wav" data-rate="0.5">0.5&#215;</button>
-          <span>carioca [ʁ]/[x]/[h] — #1</span>
+          <span>carioca [x]/[h] &middot; #1</span>
         </div>
       </figure>
       <figure class="clip">
@@ -178,7 +178,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_carioca_2.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_carioca_2.wav" data-rate="0.5">0.5&#215;</button>
-          <span>carioca [ʁ]/[x]/[h] — #2</span>
+          <span>carioca [x]/[h] &middot; #2</span>
         </div>
       </figure>
       <figure class="clip">
@@ -186,7 +186,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_carioca_3.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_carioca_3.wav" data-rate="0.5">0.5&#215;</button>
-          <span>carioca [ʁ]/[x]/[h] — #3</span>
+          <span>carioca [x]/[h] &middot; #3</span>
         </div>
       </figure>
     </div>
@@ -197,7 +197,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_tap_1.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_tap_1.wav" data-rate="0.5">0.5&#215;</button>
-          <span>tap [ɾ] — #1</span>
+          <span>tap [ɾ] &middot; #1</span>
         </div>
       </figure>
       <figure class="clip">
@@ -205,7 +205,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_tap_2.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_tap_2.wav" data-rate="0.5">0.5&#215;</button>
-          <span>tap [ɾ] — #2</span>
+          <span>tap [ɾ] &middot; #2</span>
         </div>
       </figure>
       <figure class="clip">
@@ -213,7 +213,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_tap_3.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_tap_3.wav" data-rate="0.5">0.5&#215;</button>
-          <span>tap [ɾ] — #3</span>
+          <span>tap [ɾ] &middot; #3</span>
         </div>
       </figure>
     </div>
@@ -224,7 +224,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_caipira_1.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_caipira_1.wav" data-rate="0.5">0.5&#215;</button>
-          <span>caipira [ɻ] — #1</span>
+          <span>caipira [ɻ] &middot; #1</span>
         </div>
       </figure>
       <figure class="clip">
@@ -232,7 +232,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_caipira_2.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_caipira_2.wav" data-rate="0.5">0.5&#215;</button>
-          <span>caipira [ɻ] — #2</span>
+          <span>caipira [ɻ] &middot; #2</span>
         </div>
       </figure>
       <figure class="clip">
@@ -240,7 +240,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/r_coda_caipira_3.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/r_coda_caipira_3.wav" data-rate="0.5">0.5&#215;</button>
-          <span>caipira [ɻ] — #3</span>
+          <span>caipira [ɻ] &middot; #3</span>
         </div>
       </figure>
     </div>
@@ -261,7 +261,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/dt_palat_palatalized_1.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/dt_palat_palatalized_1.wav" data-rate="0.5">0.5&#215;</button>
-          <span>palatalized [dʒ]/[tʃ] — #1</span>
+          <span>palatalized [dʒ]/[tʃ] &middot; #1</span>
         </div>
       </figure>
       <figure class="clip">
@@ -269,7 +269,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/dt_palat_palatalized_2.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/dt_palat_palatalized_2.wav" data-rate="0.5">0.5&#215;</button>
-          <span>palatalized [dʒ]/[tʃ] — #2</span>
+          <span>palatalized [dʒ]/[tʃ] &middot; #2</span>
         </div>
       </figure>
       <figure class="clip">
@@ -277,7 +277,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/dt_palat_palatalized_3.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/dt_palat_palatalized_3.wav" data-rate="0.5">0.5&#215;</button>
-          <span>palatalized [dʒ]/[tʃ] — #3</span>
+          <span>palatalized [dʒ]/[tʃ] &middot; #3</span>
         </div>
       </figure>
     </div>
@@ -288,7 +288,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/dt_palat_non_palatalized_1.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/dt_palat_non_palatalized_1.wav" data-rate="0.5">0.5&#215;</button>
-          <span>non-palatalized [d]/[t] — #1</span>
+          <span>non-palatalized [d]/[t] &middot; #1</span>
         </div>
       </figure>
       <figure class="clip">
@@ -296,7 +296,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/dt_palat_non_palatalized_2.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/dt_palat_non_palatalized_2.wav" data-rate="0.5">0.5&#215;</button>
-          <span>non-palatalized [d]/[t] — #2</span>
+          <span>non-palatalized [d]/[t] &middot; #2</span>
         </div>
       </figure>
       <figure class="clip">
@@ -304,7 +304,7 @@
         <div class="clip-meta">
           <button class="play" data-src="audio/dt_palat_non_palatalized_3.wav">&#9654; 1&#215;</button>
           <button class="play slow" data-src="audio/dt_palat_non_palatalized_3.wav" data-rate="0.5">0.5&#215;</button>
-          <span>non-palatalized [d]/[t] — #3</span>
+          <span>non-palatalized [d]/[t] &middot; #3</span>
         </div>
       </figure>
     </div>
@@ -428,7 +428,7 @@
     Audio clips are 160 ms research excerpts drawn from public pt-BR corpora: Mozilla Common Voice (CC0) and Alcaim / Certas Palavras corpora (for /s/ coda examples).
     Full clip provenance is listed in <a href="audio/SOURCES.txt">audio/SOURCES.txt</a>.
   </p>
-  <p style="margin-top:.5rem;">GPA &mdash; Grupo de Processamento de &Aacute;udio, SMT/UFRJ</p>
+  <p style="margin-top:.5rem;">GPA | Grupo de Processamento de &Aacute;udio, SMT/UFRJ</p>
 </footer>
 
 </div>
