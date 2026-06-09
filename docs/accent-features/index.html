@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Extracting accent features in spoken Brazilian Portuguese — Companion Page</title>
+  <meta name="description" content="Companion page for arXiv:2605.30457 — Extracting accent features in spoken Brazilian Portuguese without sociolinguistic labels (SBrT 2026).">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Extracting accent features in spoken Brazilian Portuguese without sociolinguistic labels</h1>
+  <p class="authors">
+    Pedro H. L. Leite (PEE/COPPE, UFRJ) &middot;
+    Pedro Benevenuto Valadares (FEEC, UNICAMP) &middot;
+    Luiz W. P. Biscainho (DEL/Poli &amp; PEE/COPPE, UFRJ)
+  </p>
+  <p class="subtitle">
+    Companion page &mdash; submitted to SBrT 2026 (XLIV Brazilian Symposium on Telecommunications and Signal Processing) &middot; <a href="https://arxiv.org/abs/2605.30457">arXiv:2605.30457</a>
+  </p>
+  <div class="btn-row">
+    <a class="btn" href="https://arxiv.org/abs/2605.30457" target="_blank" rel="noopener">arXiv</a>
+    <a class="btn" href="https://arxiv.org/pdf/2605.30457" target="_blank" rel="noopener">PDF</a>
+    <a class="btn" href="#citation">BibTeX</a>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════════════ Overview -->
+<section>
+  <h2>Overview</h2>
+  <div class="overview">
+    <p>Regional accent classification in Brazilian Portuguese suffers from unreliable sociolinguistic labels, and large self-supervised (SSL) speech models dilute sociophonetic information across their latent spaces. This work introduces a purely audio-driven pipeline: a phoneme-based forced aligner (ZIPA) localizes specific accent markers — <em>/s/ coda</em>, <em>/r/ coda</em>, and <em>/d/–/t/ palatalization</em> — and low-dimensional features extracted at exactly those instants classify how each speaker realizes them. The resulting localized features are interpretable, computationally lightweight, and competitive with (or better than) large pretrained embeddings on accent-related tasks.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Research Questions -->
+<section>
+  <h2>Research Questions &amp; Answers</h2>
+  <div class="rq-grid">
+
+    <div class="rq-card">
+      <strong>Can accent markers be detected and classified from audio alone, without sociolinguistic labels?</strong>
+      <p>Yes. ZIPA in forced-alignment mode localizes marker instants, and classifiers over features extracted at those instants match human annotations with high speaker accuracy under balanced stratified cross-validation: <span class="highlight">1.00 ± 0.00</span> for /s/ coda (ZIPA alone), <span class="highlight">0.85 ± 0.22</span> for /r/ coda (Sp.+ZIPA+Allo), and <span class="highlight">0.88 ± 0.14</span> for /d/–/t/ palatalization (Sp.+ZIPA).</p>
+    </div>
+
+    <div class="rq-card">
+      <strong>Which features capture each marker best?</strong>
+      <p>ZIPA phone-probability logits are the strongest single ingredient &mdash; alone they are perfect on /s/ coda, and the winning sets for the other tasks all include them. Optimal analysis windows are feature- and task-specific (e.g., spectral moments use a narrow 40 ms post-onset window for /s/ and /r/ coda, while /d/–/t/ needs the full 160 ms consonant-vowel transition). The complete feature × task ablation is shown in the <a href="#ablation">interactive table</a> below.</p>
+    </div>
+
+    <div class="rq-card">
+      <strong>Does localization matter, or are whole-utterance embeddings enough?</strong>
+      <p>Localization matters a lot. Mean-pooled whole-utterance embeddings from SoTA SSL models top out at 0.85 / 0.57 / 0.73 speaker accuracy for the three tasks, versus <span class="highlight">1.00 / 0.85 / 0.88</span> for the proposed aligned features &mdash; evidence of the &ldquo;information dilution&rdquo; that occurs when accent cues are averaged across the full utterance.</p>
+    </div>
+
+    <div class="rq-card">
+      <strong>Are these compact features useful for actual accent detection?</strong>
+      <p>Yes. A 7-dimensional vector of marker-class probabilities with logistic regression achieves <span class="highlight">82%</span> overall F1 on cross-dataset binary PE vs. SP classification, versus 75% for fine-tuned XLSR-53. On a 4-class task (Northeast / RJ / SP / MG) the proposed features reach macro F1 <span class="highlight">0.83 ± 0.02</span> &mdash; on par with the best SSL embeddings (0.84) at roughly 1/100th the dimensionality, with interpretable coefficients that align with the ALiB linguistic atlas.</p>
+    </div>
+
+  </div>
+  <p style="margin-top:1rem;font-size:.85rem;color:#555;">
+    <em>Limitation: these three markers do not fully disambiguate all Brazilian accents; broader coverage requires further markers (e.g., /l/ palatalization, vowel openness) and prosodic cues.</em>
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Taxonomy -->
+<section>
+  <h2>The Three Accent Markers</h2>
+  <p style="margin-bottom:.9rem;font-size:.9rem;">Speakers are classified according to their realization of three phonological variables, which map to distinct regional varieties of Brazilian Portuguese.</p>
+  <table class="taxonomy-table">
+    <thead><tr><th>Marker</th><th>Class</th><th>IPA realization</th><th>Typical regions</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2">/s/ coda</td><td>Chiado</td><td class="ipa">[ʃ]</td><td>Rio de Janeiro, Florianópolis, Belém</td></tr>
+      <tr>                             <td>Sibilant</td><td class="ipa">[s]</td><td>São Paulo, South</td></tr>
+      <tr><td rowspan="3">/r/ coda</td><td>Carioca</td><td class="ipa">[ʁ] / [x] / [h]</td><td>Rio de Janeiro, Fluminense</td></tr>
+      <tr>                             <td>Tap</td>    <td class="ipa">[ɾ]</td><td>São Paulo (city), Porto Alegre</td></tr>
+      <tr>                             <td>Caipira</td><td class="ipa">[ɻ]</td><td>Interior São Paulo, Paraná, Goiás</td></tr>
+      <tr><td rowspan="2">/d/–/t/ + /i/</td><td>Palatalized</td>    <td class="ipa">[dʒⁱ] / [tʃⁱ]</td><td>Rio de Janeiro, São Paulo, Minas Gerais</td></tr>
+      <tr>                                   <td>Non-palatalized</td><td class="ipa">[dⁱ] / [tⁱ]</td><td>Northeast</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Audio -->
+<section>
+  <h2>Listen: Marker Realizations</h2>
+  <p style="font-size:.85rem;color:#555;margin-bottom:1.2rem;">
+    Each clip is a 160 ms window centered on a ZIPA-detected phoneme spike &mdash; the exact unit used for feature extraction in the paper.
+    Use the 0.5&times; button to slow playback for easier perception.
+  </p>
+
+  <!-- /s/ coda -->
+  <div class="marker-section">
+    <h3>/s/ Coda</h3>
+    <p class="listening-hint">
+      <strong>What to listen for:</strong> <em>chiado</em> produces a &ldquo;sh&rdquo;-like sound with energy spread lower and broader in frequency; <em>sibilant</em> concentrates energy higher (&gt;4 kHz), giving a sharper &ldquo;s&rdquo;. The spectrograms show this clearly: chiado has a diffuse frication band, sibilant a narrow bright ridge at the top.
+    </p>
+    <div class="class-grid">
+    <div class="class-col">
+      <h4>Chiado</h4>
+      <figure class="clip">
+        <img src="img/s_coda_chiado_1.png" alt="Spectrogram, Chiado example 1" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/s_coda_chiado_1.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/s_coda_chiado_1.wav" data-rate="0.5">0.5&#215;</button>
+          <span>chiado [ʃ] — #1</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/s_coda_chiado_2.png" alt="Spectrogram, Chiado example 2" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/s_coda_chiado_2.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/s_coda_chiado_2.wav" data-rate="0.5">0.5&#215;</button>
+          <span>chiado [ʃ] — #2</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/s_coda_chiado_3.png" alt="Spectrogram, Chiado example 3" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/s_coda_chiado_3.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/s_coda_chiado_3.wav" data-rate="0.5">0.5&#215;</button>
+          <span>chiado [ʃ] — #3</span>
+        </div>
+      </figure>
+    </div>
+    <div class="class-col">
+      <h4>Sibilant</h4>
+      <figure class="clip">
+        <img src="img/s_coda_sibilant_1.png" alt="Spectrogram, Sibilant example 1" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/s_coda_sibilant_1.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/s_coda_sibilant_1.wav" data-rate="0.5">0.5&#215;</button>
+          <span>sibilant [s] — #1</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/s_coda_sibilant_2.png" alt="Spectrogram, Sibilant example 2" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/s_coda_sibilant_2.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/s_coda_sibilant_2.wav" data-rate="0.5">0.5&#215;</button>
+          <span>sibilant [s] — #2</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/s_coda_sibilant_3.png" alt="Spectrogram, Sibilant example 3" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/s_coda_sibilant_3.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/s_coda_sibilant_3.wav" data-rate="0.5">0.5&#215;</button>
+          <span>sibilant [s] — #3</span>
+        </div>
+      </figure>
+    </div>
+    </div>
+  </div>
+
+  <!-- /r/ coda -->
+  <div class="marker-section">
+    <h3>/r/ Coda</h3>
+    <p class="listening-hint">
+      <strong>What to listen for:</strong> <em>carioca</em> sounds like a breathy velar or glottal fricative (similar to German &ldquo;ch&rdquo;); <em>tap</em> is a quick flap similar to the British English &ldquo;r&rdquo; in &ldquo;very&rdquo;; <em>caipira</em> is the retroflexed &ldquo;r&rdquo; of interior São Paulo &mdash; colored and retroflex.
+    </p>
+    <div class="class-grid">
+    <div class="class-col">
+      <h4>Carioca</h4>
+      <figure class="clip">
+        <img src="img/r_coda_carioca_1.png" alt="Spectrogram, Carioca example 1" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_carioca_1.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_carioca_1.wav" data-rate="0.5">0.5&#215;</button>
+          <span>carioca [ʁ]/[x]/[h] — #1</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/r_coda_carioca_2.png" alt="Spectrogram, Carioca example 2" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_carioca_2.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_carioca_2.wav" data-rate="0.5">0.5&#215;</button>
+          <span>carioca [ʁ]/[x]/[h] — #2</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/r_coda_carioca_3.png" alt="Spectrogram, Carioca example 3" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_carioca_3.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_carioca_3.wav" data-rate="0.5">0.5&#215;</button>
+          <span>carioca [ʁ]/[x]/[h] — #3</span>
+        </div>
+      </figure>
+    </div>
+    <div class="class-col">
+      <h4>Tap</h4>
+      <figure class="clip">
+        <img src="img/r_coda_tap_1.png" alt="Spectrogram, Tap example 1" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_tap_1.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_tap_1.wav" data-rate="0.5">0.5&#215;</button>
+          <span>tap [ɾ] — #1</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/r_coda_tap_2.png" alt="Spectrogram, Tap example 2" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_tap_2.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_tap_2.wav" data-rate="0.5">0.5&#215;</button>
+          <span>tap [ɾ] — #2</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/r_coda_tap_3.png" alt="Spectrogram, Tap example 3" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_tap_3.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_tap_3.wav" data-rate="0.5">0.5&#215;</button>
+          <span>tap [ɾ] — #3</span>
+        </div>
+      </figure>
+    </div>
+    <div class="class-col">
+      <h4>Caipira</h4>
+      <figure class="clip">
+        <img src="img/r_coda_caipira_1.png" alt="Spectrogram, Caipira example 1" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_caipira_1.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_caipira_1.wav" data-rate="0.5">0.5&#215;</button>
+          <span>caipira [ɻ] — #1</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/r_coda_caipira_2.png" alt="Spectrogram, Caipira example 2" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_caipira_2.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_caipira_2.wav" data-rate="0.5">0.5&#215;</button>
+          <span>caipira [ɻ] — #2</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/r_coda_caipira_3.png" alt="Spectrogram, Caipira example 3" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/r_coda_caipira_3.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/r_coda_caipira_3.wav" data-rate="0.5">0.5&#215;</button>
+          <span>caipira [ɻ] — #3</span>
+        </div>
+      </figure>
+    </div>
+    </div>
+  </div>
+
+  <!-- /d/–/t/ palatalization -->
+  <div class="marker-section">
+    <h3>/d/–/t/ Palatalization</h3>
+    <p class="listening-hint">
+      <strong>What to listen for:</strong> <em>palatalized</em> speakers produce &ldquo;djia&rdquo; / &ldquo;tchia&rdquo; for words like <em>dia</em> / <em>tia</em> (affricate followed by vowel); <em>non-palatalized</em> speakers keep a plain &ldquo;d&rdquo; / &ldquo;t&rdquo; before /i/. The spectrogram shows an extra frication burst after the stop in palatalized examples.
+    </p>
+    <div class="class-grid">
+    <div class="class-col">
+      <h4>Palatalized</h4>
+      <figure class="clip">
+        <img src="img/dt_palat_palatalized_1.png" alt="Spectrogram, Palatalized example 1" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/dt_palat_palatalized_1.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/dt_palat_palatalized_1.wav" data-rate="0.5">0.5&#215;</button>
+          <span>palatalized [dʒ]/[tʃ] — #1</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/dt_palat_palatalized_2.png" alt="Spectrogram, Palatalized example 2" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/dt_palat_palatalized_2.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/dt_palat_palatalized_2.wav" data-rate="0.5">0.5&#215;</button>
+          <span>palatalized [dʒ]/[tʃ] — #2</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/dt_palat_palatalized_3.png" alt="Spectrogram, Palatalized example 3" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/dt_palat_palatalized_3.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/dt_palat_palatalized_3.wav" data-rate="0.5">0.5&#215;</button>
+          <span>palatalized [dʒ]/[tʃ] — #3</span>
+        </div>
+      </figure>
+    </div>
+    <div class="class-col">
+      <h4>Non-palatalized</h4>
+      <figure class="clip">
+        <img src="img/dt_palat_non_palatalized_1.png" alt="Spectrogram, Non-palatalized example 1" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/dt_palat_non_palatalized_1.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/dt_palat_non_palatalized_1.wav" data-rate="0.5">0.5&#215;</button>
+          <span>non-palatalized [d]/[t] — #1</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/dt_palat_non_palatalized_2.png" alt="Spectrogram, Non-palatalized example 2" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/dt_palat_non_palatalized_2.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/dt_palat_non_palatalized_2.wav" data-rate="0.5">0.5&#215;</button>
+          <span>non-palatalized [d]/[t] — #2</span>
+        </div>
+      </figure>
+      <figure class="clip">
+        <img src="img/dt_palat_non_palatalized_3.png" alt="Spectrogram, Non-palatalized example 3" loading="lazy">
+        <div class="clip-meta">
+          <button class="play" data-src="audio/dt_palat_non_palatalized_3.wav">&#9654; 1&#215;</button>
+          <button class="play slow" data-src="audio/dt_palat_non_palatalized_3.wav" data-rate="0.5">0.5&#215;</button>
+          <span>non-palatalized [d]/[t] — #3</span>
+        </div>
+      </figure>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Ablation -->
+<section id="ablation">
+  <h2>Full Ablation Study</h2>
+  <p style="font-size:.85rem;color:#555;margin-bottom:.8rem;">
+    Best speaker accuracy per feature set and task (best classifier per cell selected among XGBoost, logistic regression, and linear SVM), under balanced stratified cross-validation with ~5 test speakers per fold and speaker isolation between folds. The mean ± std is computed across folds. This is the full study summarized in the paper (referenced there as companion page footnote 5).
+  </p>
+
+<div class="table-scroll"><table class="ablation">
+<thead><tr><th>Feature</th><th>/s/ coda</th><th>/r/ coda</th><th>/d/–/t/ palat.</th></tr></thead>
+<tbody>
+<tr class="group-hdr"><th colspan="4">Lightweight features (ZIPA / Spec / MFCC / Allo)</th></tr>
+<tr><td>ZIPA</td><td style="background:#006837; color:#fff">1.00 <span class="std">±0.00</span></td><td style="background:#C7E77F;">0.82 <span class="std">±0.19</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.06</span></td></tr>
+<tr><td>Spec+ZIPA</td><td style="background:#9FD669;">0.85 <span class="std">±0.25</span></td><td style="background:#C7E77F;">0.82 <span class="std">±0.23</span></td><td style="background:#84CA66;">0.88 <span class="std">±0.14</span></td></tr>
+<tr><td>ZIPA+Allo</td><td style="background:#006837; color:#fff">1.00 <span class="std">±0.00</span></td><td style="background:#D9EF8B;">0.80 <span class="std">±0.22</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.06</span></td></tr>
+<tr><td>Spec+ZIPA+Allo</td><td style="background:#77C464;">0.89 <span class="std">±0.17</span></td><td style="background:#A4D869;">0.85 <span class="std">±0.22</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td>MFCC+ZIPA</td><td style="background:#CBE881;">0.81 <span class="std">±0.15</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.23</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.18</span></td></tr>
+<tr><td>MFCC+ZIPA+Allo</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.16</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.17</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td>Spec-6</td><td style="background:#FEF8B3;">0.74 <span class="std">±0.27</span></td><td style="background:#FA9856;">0.63 <span class="std">±0.26</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.14</span></td></tr>
+<tr><td>MFCC-39</td><td style="background:#DEF193;">0.79 <span class="std">±0.13</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.23</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.06</span></td></tr>
+<tr><td>Spec+Allo</td><td style="background:#FEF8B3;">0.74 <span class="std">±0.27</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.15</span></td><td style="background:#FDBE6E;">0.67 <span class="std">±0.20</span></td></tr>
+<tr><td>MFCC+Allo</td><td style="background:#DEF193;">0.79 <span class="std">±0.13</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.20</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.14</span></td></tr>
+<tr><td>Allo</td><td style="background:#FEEC9F;">0.72 <span class="std">±0.25</span></td><td style="background:#FCAC60;">0.65 <span class="std">±0.19</span></td><td style="background:#E95739; color:#fff">0.58 <span class="std">±0.14</span></td></tr>
+<tr class="group-hdr"><th colspan="4">XLSR-PT</th></tr>
+<tr><td>XLSR-PT</td><td style="background:#4BAF5C; color:#fff">0.92 <span class="std">±0.11</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.21</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+ZIPA</td><td style="background:#1B9850; color:#fff">0.95 <span class="std">±0.09</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.24</span></td><td style="background:#84CA66;">0.88 <span class="std">±0.14</span></td></tr>
+<tr><td class="combo">+Spec</td><td style="background:#93D067;">0.86 <span class="std">±0.11</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.21</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+MFCC</td><td style="background:#84CA66;">0.88 <span class="std">±0.10</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.23</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+Allo</td><td style="background:#4BAF5C; color:#fff">0.92 <span class="std">±0.11</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.15</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA</td><td style="background:#3CA858; color:#fff">0.93 <span class="std">±0.10</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.21</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.20</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA</td><td style="background:#CBE881;">0.81 <span class="std">±0.15</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.21</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA+Allo</td><td style="background:#3CA858; color:#fff">0.93 <span class="std">±0.10</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.21</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.20</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA+Allo</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.16</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.26</span></td><td style="background:#84CA66;">0.88 <span class="std">±0.14</span></td></tr>
+<tr class="group-hdr"><th colspan="4">XLS-R</th></tr>
+<tr><td>XLSR</td><td style="background:#DEF193;">0.79 <span class="std">±0.16</span></td><td style="background:#E4F49B;">0.78 <span class="std">±0.20</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+ZIPA</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.16</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.21</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+Spec</td><td style="background:#DEF193;">0.79 <span class="std">±0.16</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.19</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+MFCC</td><td style="background:#DEF193;">0.79 <span class="std">±0.16</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.19</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+Allo</td><td style="background:#C1E47B;">0.82 <span class="std">±0.17</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.20</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA</td><td style="background:#C1E47B;">0.82 <span class="std">±0.17</span></td><td style="background:#E4F49B;">0.78 <span class="std">±0.21</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA</td><td style="background:#DEF193;">0.79 <span class="std">±0.16</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.24</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA+Allo</td><td style="background:#C1E47B;">0.82 <span class="std">±0.17</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.21</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA+Allo</td><td style="background:#DEF193;">0.79 <span class="std">±0.16</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.24</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr class="group-hdr"><th colspan="4">Wav2Vec 2.0</th></tr>
+<tr><td>Wav2Vec 2.0</td><td style="background:#93D067;">0.86 <span class="std">±0.17</span></td><td style="background:#FEE99B;">0.72 <span class="std">±0.15</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.14</span></td></tr>
+<tr><td class="combo">+ZIPA</td><td style="background:#6BBF63;">0.90 <span class="std">±0.17</span></td><td style="background:#D9EF8B;">0.80 <span class="std">±0.18</span></td><td style="background:#4BAF5C; color:#fff">0.92 <span class="std">±0.14</span></td></tr>
+<tr><td class="combo">+Spec</td><td style="background:#EFF8A9;">0.77 <span class="std">±0.14</span></td><td style="background:#FDBE6E;">0.67 <span class="std">±0.20</span></td><td style="background:#FEE493;">0.71 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+MFCC</td><td style="background:#93D067;">0.86 <span class="std">±0.17</span></td><td style="background:#FDBE6E;">0.67 <span class="std">±0.22</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.14</span></td></tr>
+<tr><td class="combo">+Allo</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.16</span></td><td style="background:#FDCE7C;">0.68 <span class="std">±0.22</span></td><td style="background:#FEE493;">0.71 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA</td><td style="background:#6BBF63;">0.90 <span class="std">±0.17</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td><td style="background:#84CA66;">0.88 <span class="std">±0.14</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.16</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.23</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA+Allo</td><td style="background:#84CA66;">0.88 <span class="std">±0.18</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA+Allo</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.16</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.25</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr class="group-hdr"><th colspan="4">HuBERT</th></tr>
+<tr><td>HuBERT</td><td style="background:#CBE881;">0.81 <span class="std">±0.15</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.20</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+ZIPA</td><td style="background:#6BBF63;">0.90 <span class="std">±0.17</span></td><td style="background:#A4D869;">0.85 <span class="std">±0.23</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+Spec</td><td style="background:#D7EE89;">0.80 <span class="std">±0.20</span></td><td style="background:#A4D869;">0.85 <span class="std">±0.19</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+MFCC</td><td style="background:#E7F59F;">0.78 <span class="std">±0.18</span></td><td style="background:#E4F49B;">0.78 <span class="std">±0.18</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+Allo</td><td style="background:#CBE881;">0.81 <span class="std">±0.15</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.20</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA</td><td style="background:#6BBF63;">0.90 <span class="std">±0.17</span></td><td style="background:#66BD63;">0.90 <span class="std">±0.13</span></td><td style="background:#84CA66;">0.88 <span class="std">±0.14</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA</td><td style="background:#CBE881;">0.81 <span class="std">±0.15</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.20</span></td><td style="background:#84CA66;">0.88 <span class="std">±0.14</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA+Allo</td><td style="background:#6BBF63;">0.90 <span class="std">±0.17</span></td><td style="background:#90CF67;">0.87 <span class="std">±0.16</span></td><td style="background:#DEF193;">0.79 <span class="std">±0.22</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA+Allo</td><td style="background:#CBE881;">0.81 <span class="std">±0.15</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.20</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.17</span></td></tr>
+<tr class="group-hdr"><th colspan="4">ECAPA-TDNN</th></tr>
+<tr><td>ECAPA-TDNN</td><td style="background:#77C464;">0.89 <span class="std">±0.17</span></td><td style="background:#C7E77F;">0.82 <span class="std">±0.19</span></td><td style="background:#FDBE6E;">0.67 <span class="std">±0.10</span></td></tr>
+<tr><td class="combo">+ZIPA</td><td style="background:#4BAF5C; color:#fff">0.92 <span class="std">±0.17</span></td><td style="background:#A4D869;">0.85 <span class="std">±0.19</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.06</span></td></tr>
+<tr><td class="combo">+Spec</td><td style="background:#D7EE89;">0.80 <span class="std">±0.23</span></td><td style="background:#D9EF8B;">0.80 <span class="std">±0.22</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+MFCC</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.18</span></td><td style="background:#C7E77F;">0.82 <span class="std">±0.22</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+Allo</td><td style="background:#77C464;">0.89 <span class="std">±0.17</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.18</span></td><td style="background:#FEE493;">0.71 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA</td><td style="background:#9FD669;">0.85 <span class="std">±0.25</span></td><td style="background:#B7E075;">0.83 <span class="std">±0.21</span></td><td style="background:#9FD669;">0.85 <span class="std">±0.09</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.18</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.19</span></td><td style="background:#FEFEBD;">0.75 <span class="std">±0.06</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA+Allo</td><td style="background:#9FD669;">0.85 <span class="std">±0.25</span></td><td style="background:#A4D869;">0.85 <span class="std">±0.17</span></td><td style="background:#9FD669;">0.85 <span class="std">±0.09</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA+Allo</td><td style="background:#ABDB6D;">0.84 <span class="std">±0.18</span></td><td style="background:#E4F49B;">0.78 <span class="std">±0.18</span></td><td style="background:#CBE881;">0.81 <span class="std">±0.12</span></td></tr>
+<tr class="group-hdr"><th colspan="4">Resemblyzer</th></tr>
+<tr><td>Resemblyzer</td><td style="background:#FEE493;">0.71 <span class="std">±0.20</span></td><td style="background:#F46D43;">0.60 <span class="std">±0.08</span></td><td style="background:#A50026; color:#fff">0.50 <span class="std">±0.12</span></td></tr>
+<tr><td class="combo">+ZIPA</td><td style="background:#DEF193;">0.79 <span class="std">±0.24</span></td><td style="background:#FEF4AD;">0.73 <span class="std">±0.26</span></td><td style="background:#FEE493;">0.71 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+Spec</td><td style="background:#F6FBB3;">0.76 <span class="std">±0.25</span></td><td style="background:#F46D43;">0.60 <span class="std">±0.13</span></td><td style="background:#FEF2A9;">0.73 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+MFCC</td><td style="background:#E7F59F;">0.78 <span class="std">±0.22</span></td><td style="background:#D62F26; color:#fff">0.55 <span class="std">±0.18</span></td><td style="background:#FEE493;">0.71 <span class="std">±0.04</span></td></tr>
+<tr><td class="combo">+Allo</td><td style="background:#E7F59F;">0.78 <span class="std">±0.22</span></td><td style="background:#F6814C;">0.62 <span class="std">±0.20</span></td><td style="background:#DE3F2E; color:#fff">0.56 <span class="std">±0.16</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA</td><td style="background:#DEF193;">0.79 <span class="std">±0.24</span></td><td style="background:#F2F9AD;">0.77 <span class="std">±0.21</span></td><td style="background:#EFF8A9;">0.77 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA</td><td style="background:#E7F59F;">0.78 <span class="std">±0.22</span></td><td style="background:#FEE08B;">0.70 <span class="std">±0.27</span></td><td style="background:#FEE493;">0.71 <span class="std">±0.04</span></td></tr>
+<tr><td class="combo">+Spec+ZIPA+Allo</td><td style="background:#DEF193;">0.79 <span class="std">±0.24</span></td><td style="background:#E4F49B;">0.78 <span class="std">±0.22</span></td><td style="background:#FEF2A9;">0.73 <span class="std">±0.18</span></td></tr>
+<tr><td class="combo">+MFCC+ZIPA+Allo</td><td style="background:#E7F59F;">0.78 <span class="std">±0.22</span></td><td style="background:#FEE08B;">0.70 <span class="std">±0.27</span></td><td style="background:#FEE493;">0.71 <span class="std">±0.04</span></td></tr>
+</tbody></table></div>
+
+  <div class="legend">
+    <span>Low accuracy</span>
+    <div class="legend-bar"></div>
+    <span>High accuracy</span>
+  </div>
+  <p class="ablation-caption">
+    Best speaker accuracy per feature set (best classifier selected per cell). Values show mean&thinsp;&plusmn;&thinsp;std across balanced stratified cross-validation folds (&sim;5 test speakers/fold). Heatmap colors match the paper.
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Citation -->
+<section id="citation">
+  <h2>Citation</h2>
+<pre class="bibtex">@misc{leite2026accentfeatures,
+  title         = {Extracting accent features in spoken Brazilian Portuguese
+                   without sociolinguistic labels},
+  author        = {Leite, Pedro H. L. and Valadares, Pedro Benevenuto and
+                   Biscainho, Luiz W. P.},
+  year          = {2026},
+  eprint        = {2605.30457},
+  archivePrefix = {arXiv},
+  primaryClass  = {eess.AS}
+}</pre>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Footer -->
+<footer>
+  <p>This work was submitted to the XLIV Brazilian Symposium on Telecommunications and Signal Processing (SBrT 2026) and was partially supported by the National Council for Scientific and Technological Development, CNPq (306395/2025-8).</p>
+  <p style="margin-top:.5rem;">
+    Audio clips are 160 ms research excerpts drawn from public pt-BR corpora: Mozilla Common Voice (CC0) and Alcaim / Certas Palavras corpora (for /s/ coda examples).
+    Full clip provenance is listed in <a href="audio/SOURCES.txt">audio/SOURCES.txt</a>.
+  </p>
+  <p style="margin-top:.5rem;">GPA &mdash; Grupo de Processamento de &Aacute;udio, SMT/UFRJ</p>
+</footer>
+
+</div>
+
+<script>
+const audio = new Audio();
+let activeBtn = null;
+document.querySelectorAll('button.play').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (activeBtn) activeBtn.textContent = activeBtn.dataset.origText;
+    if (activeBtn === btn && !audio.paused) {
+      audio.pause();
+      activeBtn = null;
+      return;
+    }
+    if (!btn.dataset.origText) btn.dataset.origText = btn.textContent;
+    audio.src = btn.dataset.src;
+    audio.preservesPitch = false;
+    audio.playbackRate = parseFloat(btn.dataset.rate || '1');
+    audio.play();
+    btn.textContent = '&#9646;&#9646;';
+    activeBtn = btn;
+    audio.onended = () => {
+      btn.textContent = btn.dataset.origText;
+      activeBtn = null;
+    };
+  });
+});
+</script>
+</body>
+</html>
