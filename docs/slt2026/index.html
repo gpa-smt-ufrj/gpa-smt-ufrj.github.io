@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Synthetic speech detection in Brazilian Portuguese | Companion Page</title>
+  <meta name="description" content="Companion page for the IEEE SLT 2026 paper: Synthetic speech detection in Brazilian Portuguese through accent-related features.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Synthetic speech detection in Brazilian Portuguese through accent-related features</h1>
+  <p class="authors">
+    Pedro H. L. Leite (PEE/COPPE, UFRJ) &middot;
+    Pedro Benevenuto Valadares (FEEC, UNICAMP) &middot;
+    Luiz W. P. Biscainho (DEL/Poli &amp; PEE/COPPE, UFRJ)
+  </p>
+  <p class="subtitle">
+    Companion page for the paper accepted at IEEE SLT 2026 (Spoken Language Technology Workshop)
+  </p>
+  <div class="btn-row">
+    <span class="btn btn-off" title="Link will be added once the proceedings are published">PDF &mdash; IEEE Xplore soon</span>
+    <a class="btn" href="https://github.com/pedrohlopes/pt-br-accent-toolbox" target="_blank" rel="noopener">Toolbox (code)</a>
+    <a class="btn" href="#citation">BibTeX</a>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════════════ Overview -->
+<section>
+  <h2>Overview</h2>
+  <div class="overview">
+    <p>Leading commercial and open-source Text-to-Speech models do not reproduce the regional phonetic
+    diversity of Brazilian Portuguese. By aggregating disparate dialects into a single training
+    distribution, they generate a &ldquo;diluted&rdquo; accent: a phonetic profile that tries to represent
+    all regional distributions at once and ends up carrying phonological ambiguity dissociated from
+    natural sociophonetic processes. This work extracts phoneme-level features at consonantal and
+    vocalic realizations with high geographic variance, by combining multilingual phone recognizers
+    with classical signal processing. The distributional gap over these features is large enough to
+    separate natural from synthetic voices with an unsupervised Kernel Density Estimator, and the same
+    interpretable, low-dimensional features are useful on Brazilian Portuguese anti-spoofing benchmarks.</p>
+  </div>
+  <p class="caption">This page collects the material referenced from the paper: the synthesis recipes and
+  prompt texts, the full experimental setup, additional feature distributions, the per-held-out-group
+  breakdown of the cross-dataset experiment, and the accuracy and clustered statistics behind the
+  within-utterance switching analysis.</p>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Research questions -->
+<section>
+  <h2>Research Questions &amp; Answers</h2>
+  <div class="rq-grid">
+
+    <div class="rq-card">
+      <strong>Can accent inconsistency separate synthetic from natural speech without a supervised detector?</strong>
+      <p>Yes. A Kernel Density Estimator fitted only on the 364 natural speakers flags synthetic voices as
+      out-of-distribution, reaching <span class="highlight">93.9%</span> AUROC on a transductive t-SNE 2D
+      projection and <span class="highlight">74.3%</span> on a deployable inductive Isomap 15D projection
+      (72.1% for PCA 5D). No synthetic sample is seen during fitting.</p>
+    </div>
+
+    <div class="rq-card">
+      <strong>What exactly differs, and is it interpretable?</strong>
+      <p>Synthetic voices show shifted sibilant realizations at /s/ coda (Cliff&rsquo;s
+      <span class="highlight">&delta;&nbsp;=&nbsp;+0.77</span>), a distorted spectral shape at /r/ coda
+      (<span class="highlight">&delta;&nbsp;=&nbsp;+0.66</span>), a narrower and displaced /o/&ndash;/&#596;/
+      vowel space, and more within-utterance realization switching for /r/ coda and /d,t/ palatalization
+      (&delta;&nbsp;=&nbsp;+0.49 and +0.55 per utterance). The
+      <a href="#distributions">feature distributions</a> and the
+      <a href="#switching">switching statistics</a> below extend the paper&rsquo;s Figures 3 and 4.</p>
+    </div>
+
+    <div class="rq-card">
+      <strong>Are the features useful on consolidated anti-spoofing benchmarks?</strong>
+      <p>On BRSpeech-DF official splits the best configuration reaches <span class="highlight">2.00%</span>
+      EER, against 30.67% for the SLS-ECAPA baseline. On FakeBRAccent under speaker-disjoint cross-validation
+      it reaches <span class="highlight">8.0 &plusmn; 0.8%</span> EER. Under double leave-one-dataset-out,
+      where an entire TTS group and an entire natural corpus are held out simultaneously, the overall EER is
+      <span class="highlight">6.09%</span>, and <span class="highlight">8.13%</span> for the fully
+      interpretable feature set.</p>
+    </div>
+
+    <div class="rq-card">
+      <strong>Where does the approach lose ground?</strong>
+      <p>On corpora built entirely from voice cloning. A cloning model follows the accent realizations of
+      its target speaker, which narrows the variability the method relies on and makes accent-based
+      disambiguation harder than for the general-purpose, mixed-identity voices found in commercial TTS
+      defaults. The three markers also do not disambiguate every Brazilian variety on their own.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Data and recipes -->
+<section id="data">
+  <h2>Data, voices and synthesis recipes</h2>
+  <p class="caption">The natural side draws on publicly available Brazilian Portuguese corpora; the
+  download helpers live in the
+  <a href="https://github.com/pedrohlopes/pt-br-accent-toolbox" target="_blank" rel="noopener">pt-br-accent-toolbox</a>
+  package (<code>tools/download_datasets.py</code> and the per-corpus scripts beside it). The synthetic side
+  was generated with the scripts below, each of which reads the same sentence list and writes 16 kHz mono WAV.</p>
+
+  <div class="table-scroll"><table class="data-table"><thead><tr><th>Provider</th><th>Model</th><th>Voices</th><th>Voice identifiers</th><th>Settings</th></tr></thead><tbody><tr><td><a href="recipes/synthesize_azure.py" title="synthesize_azure.py">Azure AI Speech</a><br><span class="dim">commercial</span></td><td><code>pt-BR *Neural voices</code></td><td>10</td><td class="ids" style="white-space:normal">pt-BR-AntonioNeural, pt-BR-FabioNeural, pt-BR-DonatoNeural, pt-BR-HumbertoNeural, pt-BR-NicolauNeural, pt-BR-FranciscaNeural, pt-BR-BrendaNeural, pt-BR-ElzaNeural, pt-BR-GiovannaNeural, pt-BR-LeticiaNeural</td><td style="white-space:normal">SSML, 16 kHz PCM output</td></tr>
+<tr><td><a href="recipes/synthesize_google.py" title="synthesize_google.py">Google Cloud TTS</a><br><span class="dim">commercial</span></td><td><code>pt-BR Neural2 / WaveNet / Standard</code></td><td>10</td><td class="ids" style="white-space:normal">pt-BR-Neural2-A, pt-BR-Neural2-C, pt-BR-Wavenet-A, pt-BR-Wavenet-D, pt-BR-Standard-A, pt-BR-Neural2-B, pt-BR-Wavenet-B, pt-BR-Wavenet-C, pt-BR-Wavenet-E, pt-BR-Standard-B</td><td style="white-space:normal">LINEAR16, 16 kHz</td></tr>
+<tr><td><a href="recipes/synthesize_openai.py" title="synthesize_openai.py">OpenAI TTS</a><br><span class="dim">commercial</span></td><td><code>tts-1-hd</code></td><td>9</td><td class="ids" style="white-space:normal">onyx, echo, fable, ash, nova, shimmer, alloy, coral, sage</td><td style="white-space:normal">PCM 24 kHz, resampled to 16 kHz</td></tr>
+<tr><td><a href="recipes/synthesize_elevenlabs.py" title="synthesize_elevenlabs.py">ElevenLabs</a><br><span class="dim">commercial</span></td><td><code>eleven_multilingual_v2</code></td><td>10</td><td class="ids" style="white-space:normal">36rVQA1AOIPwpA3Hg1tC, tS45q0QcrDHqHoaWdCDR, CstacWqMhJQlnfLPxRG4, hwnuNyWkl9DjdTFykrN6, YNOujSUmHtgN6anjqXPf, 33B4UnXyTNbgLmdEDh5P, lWq4KDY8znfkV0DrK8Vb, oJebhZNaPllxk6W0LSBA, RGymW84CSmfVugnA5tvA, cyD08lEy76q03ER1jZ7y</td><td style="white-space:normal">stability 0.5, similarity_boost 0.75, pcm_16000</td></tr>
+<tr><td><a href="recipes/synthesize_f5_ptbr.py" title="synthesize_f5_ptbr.py">F5-TTS pt-BR</a><br><span class="dim">open-source</span></td><td><code>firstpixel/F5-TTS-pt-br</code></td><td>2</td><td class="ids" style="white-space:normal">f5_ptbr_male, f5_ptbr_female</td><td style="white-space:normal">zero-shot cloning of two ~8 s Azure reference clips</td></tr>
+<tr><td><a href="recipes/synthesize_qwen3tts.py" title="synthesize_qwen3tts.py">Qwen3-TTS</a><br><span class="dim">open-source</span></td><td><code>Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice</code></td><td>9</td><td class="ids" style="white-space:normal">aiden, dylan, eric, ono_anna, ryan, serena, sohee, uncle_fu, vivian</td><td style="white-space:normal">bfloat16, preset voices, resampled to 16 kHz</td></tr>
+<tr><td><a href="recipes/synthesize_piper_ptbr.py" title="synthesize_piper_ptbr.py">Piper</a><br><span class="dim">open-source</span></td><td><code>pt_BR voices (rhasspy/piper)</code></td><td>4</td><td class="ids" style="white-space:normal">pt_BR-cadu-medium, pt_BR-edresson-low, pt_BR-faber-medium, pt_BR-jeff-medium</td><td style="white-space:normal">ONNX, 16 kHz native</td></tr>
+<tr><td><a href="recipes/synthesize_kokoro.py" title="synthesize_kokoro.py">Kokoro</a><br><span class="dim">open-source</span></td><td><code>hexgrad/Kokoro-82M</code></td><td>3</td><td class="ids" style="white-space:normal">pf_dora, pm_alex, pm_santa</td><td style="white-space:normal">lang_code &#x27;p&#x27;, 24 kHz resampled to 16 kHz</td></tr></tbody></table></div><p class="caption">57 voices in total, each synthesizing the same 50 sentences. Voice identifiers and model names are parsed directly from the synthesis scripts linked in the provider name, which are the scripts that produced the corpus. Synthesis ran between April and June 2026; commercial providers may since have updated the underlying models.</p>
+
+  <p class="caption">API credentials are never stored in these scripts: commercial providers take a
+  <code>--key</code> argument or an environment variable.</p>
+  <div class="filelist">
+    <a href="recipes/synthesize_azure.py">synthesize_azure.py</a>
+    <a href="recipes/synthesize_google.py">synthesize_google.py</a>
+    <a href="recipes/synthesize_openai.py">synthesize_openai.py</a>
+    <a href="recipes/synthesize_elevenlabs.py">synthesize_elevenlabs.py</a>
+    <a href="recipes/synthesize_f5_ptbr.py">synthesize_f5_ptbr.py</a>
+    <a href="recipes/synthesize_qwen3tts.py">synthesize_qwen3tts.py</a>
+    <a href="recipes/synthesize_piper_ptbr.py">synthesize_piper_ptbr.py</a>
+    <a href="recipes/synthesize_kokoro.py">synthesize_kokoro.py</a>
+    <a href="recipes/synth_set2_master.sh">synth_set2_master.sh</a>
+    <a href="recipes/select_subset.py">select_subset.py</a>
+  </div>
+
+  <h3>Synthesis prompt texts</h3>
+  <p class="caption">All 50 sentences below were synthesized by every one of the 57
+    voices. They are a phonetically balanced subset of the ALCaim 1000-sentence reading list, chosen by a
+    greedy selection that minimizes the L1 distance between the subset&rsquo;s phone-unit distribution and
+    that of the full list, so the synthetic side carries the same phonological coverage as the natural
+    corpora.</p>
+<ol class="sentences">
+<li>No total, sete mísseis foram disparados contra o encrave.</li>
+<li>Até agora, na televisão, eles já somam quatro ministros.</li>
+<li>Os dois times perderam uma chance atrás da outra.</li>
+<li>Os médicos ainda não sabem quanto tempo ele deverá ficar no hospital.</li>
+<li>Tenho muita vontade de aprender, mas baixo poder aquisitivo.</li>
+<li>Apesar disso, continua ligado ao seu país de origem.</li>
+<li>Evite correr ao banco para trocar o seu dinheiro.</li>
+<li>Em grande fase, é a nova sensação do time.</li>
+<li>Respondeu que a sua frase havia sido tirada do contexto.</li>
+<li>Na Universidade de Paris Três é só isso que se faz.</li>
+<li>A Coréia exporta um bilhão de dólares em móveis por ano.</li>
+<li>A polícia apreendeu nos últimos vinte dias, sessenta carros a seu serviço.</li>
+<li>Segundo ele, foi apenas um almoço rápido entre amigos.</li>
+<li>É muito raro que algum documentário esteja na lista deles.</li>
+<li>O novo presidente seria conhecido quatro dias após a votação.</li>
+<li>Segundo Almeida, é praticamente impossível controlar o fogo sem ajuda exterior.</li>
+<li>A justiça brasileira considerou o fato apenas um crime comum.</li>
+<li>A decisão está para ser tomada em fevereiro ou março.</li>
+<li>A melhoria da qualidade não interessa só a técnicos ou empresários.</li>
+<li>No final era um monte de homens se abraçando e chorando.</li>
+<li>A margem de erro é de três pontos percentuais.</li>
+<li>Juliana disse que o banco a ser escolhido é surpresa.</li>
+<li>O vencedor de cada grupo ganha um ponto extra.</li>
+<li>Estava muito calor e não soubemos dosar a energia.</li>
+<li>Segundo ele, a cabine não faz parte do edifício.</li>
+<li>Esse nosso sintetizador de voz vai ficar uma beleza.</li>
+<li>Empresa que serve ao Ministério da Fazenda aluga comitê aos tucanos.</li>
+<li>Os grandes bancos estão procurando apoiar as pequenas instituições.</li>
+<li>Outro obstáculo às relações afetivas é a competitividade interna.</li>
+<li>Sem a retirada, os muçulmanos não compareceram às negociações.</li>
+<li>Ele, ainda meio confuso, volta para perto da Constituição.</li>
+<li>Itamar pode faltar a Mercosul para ir à posse do presidente colombiano.</li>
+<li>Tem lucro de um bilhão de dólares por ano.</li>
+<li>Os belgas reclamaram, mas o juiz não deu o pênalti.</li>
+<li>O Brasil está perdendo pouco a pouco a sua identidade.</li>
+<li>É mais importante saber o que fazem os jogadores no campo.</li>
+<li>Comprei um jogo de canetas e fui visitá-lo em sua casa.</li>
+<li>Meu tipo inesquecível é o advogado Francisco Rangel Pestana.</li>
+<li>Empregado do Parlamento Europeu, ele tinha ligações com a bancada socialista.</li>
+<li>As entradas podem ser adquiridas pelo telefone acima.</li>
+<li>Aliados do tucano prevêem que essas lideranças ficarão neutras.</li>
+<li>Perdemos uma ótima oportunidade de fazer a revisão constitucional.</li>
+<li>Trabalhamos exclusivamente com tipos que fogem do padrão tradicional de beleza.</li>
+<li>Não há, assim, motivo de temor para o Brasil.</li>
+<li>No dia de seu aniversário, Rose não saiu de casa.</li>
+<li>Somente na última rodada serão definidas as colocações das equipes.</li>
+<li>Em abril a taxa foi de dois vírgula seis por cento.</li>
+<li>Sem falar nos que ainda não acertaram o fornecimento dos motores.</li>
+<li>Ser progressista hoje é ligar o pensamento liberal com a social democracia.</li>
+<li>São tantas, que você aprende a conviver com elas.</li>
+</ol>
+<div class="filelist"><a href="data/sentences_50.txt">sentences_50.txt</a><a href="data/sentences_51_100.txt">sentences_51_100.txt</a></div>
+<details><summary>Sentences 51&ndash;100 &mdash; the longer-text set used by the
+    switching experiment (50 sentences)</summary>
+    <p class="caption">The switching metric needs at least two detections of a marker inside a single
+    utterance, which required synthesizing additional longer texts so that the synthetic side matched the
+    markers-per-sentence rate of the natural recordings.</p><ol class="sentences" start="51">
+<li>O truque, segundo ele, é aproveitar bem a madrugada.</li>
+<li>Havia possibilidade de uma nova reunião ser convocada para hoje.</li>
+<li>Os sobreviventes cremaram seus mortos e procuram reconstruir suas vidas.</li>
+<li>As importações de maçã argentina não preocupam os plantadores.</li>
+<li>Daqui a pouco, a violência vai ser a única diversão.</li>
+<li>Agora, ele despenca do teto em direção ao piso.</li>
+<li>A televisão virou um açougue, uma máquina de produzir.</li>
+<li>O governo poderá adotar ações penais por crime de omissão de socorro.</li>
+<li>Nunca havia ido para um treino com seguranças no ônibus.</li>
+<li>Eles experimentaram vários tipos de comidas exóticas durante a viagem.</li>
+<li>Apenas dez por cento dos funcionários em todo Brasil trabalharam ontem.</li>
+<li>Basta que sua remuneração não seja menor que setenta reais.</li>
+<li>Isso traria efeitos sobre os financiamentos habitacionais feitos com recursos da poupança.</li>
+<li>Esta diferença acabou se refletindo no índice de julho.</li>
+<li>Desconfio que não resistirão à nossa aplicada tática de jogo.</li>
+<li>O Brasil tem pressa e o governo está pronto para agir.</li>
+<li>Todos os dias, das dezessete horas ao último cliente.</li>
+<li>Quero estar no grupo e ajudar sempre que necessário.</li>
+<li>Venda de veículos no varejo bate novo recorde em maio.</li>
+<li>Eu vi apenas dois videoteipes dos amistosos contra Argentina e Alemanha.</li>
+<li>Os investidores foram para a Argentina e para a Venezuela.</li>
+<li>Para ele, a concorrência é boa para os consumidores.</li>
+<li>As pessoas se divertiram tanto que aplaudiram de pé.</li>
+<li>A perspectiva continua otimista para o médio e longo prazos.</li>
+<li>Existem péssimas edições do livro, por isso, use o da Edição Pensamento.</li>
+<li>Ele defende a formulação de um programa mínimo para evitá-la.</li>
+<li>Outros produtos também lembrados: feijão, café e derivados de soja.</li>
+<li>Eu queria fazer minhas próprias coisas e logo caí na real.</li>
+<li>Quatro homens entraram separadamente pela porta principal da agência.</li>
+<li>Eu acabo de receber uma crítica muito elogiosa aqui no Canadá.</li>
+<li>O seqüestro de bens serviria para garantir o pagamento.</li>
+<li>É uma política oportuna e bem conduzida até agora.</li>
+<li>Vamos esquecer o passado, vamos pensar no presente e no futuro.</li>
+<li>Depois que a Mangueira passar, o suspense dominará a passarela.</li>
+<li>No entender do advogado Celso Botelho de Moraes não há inconstitucionalidade.</li>
+<li>Primeiro arredondou a idade do percussionista para cinqüenta anos.</li>
+<li>O curso é gratuito e tem a duração de seis meses.</li>
+<li>O mais desculpável em Itamar são os seus vexames de passarela.</li>
+<li>O termo caça-níqueis se aplica exatamente aos dois jogos.</li>
+<li>Ela disse que o Alcorão deveria ser revisado cuidadosamente.</li>
+<li>O grupo chegou quando os amotinados já tinham saído.</li>
+<li>O ministério diz que não foi consultado sobre a transação.</li>
+<li>O número de convocados por vaga é de doze candidatos.</li>
+<li>Para discutir sobre ecologia e projetos para gerações futuras.</li>
+<li>Fiz o que a maioria procurou fazer: evitei provocar marola.</li>
+<li>Eu não quero e não vou falar sobre câmbio e juros.</li>
+<li>O partido precisaria, de resto, abrir-se para composições políticas.</li>
+<li>A mãe de todas as reformas é a reforma política.</li>
+<li>A permanecer a atual situação, será o Brasil que não vingará.</li>
+<li>Só para o curso de inglês é necessário conhecimento da língua.</li>
+</ol></details>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Setup -->
+<section id="setup">
+  <h2>Experimental setup</h2>
+  <p class="caption">Pool composition, front-end settings, feature definitions and model hyperparameters
+  for every experiment in the paper.</p>
+  <div class="table-scroll"><table class="data-table"><tbody>
+<tr class="group-hdr"><th colspan="2">Natural speech pool</th></tr>
+<tr><td>Speakers (Tables I-II, Fig. 1-3)</td><td style="text-align:left;white-space:normal">364 = 210 TAGARELA/Spotify + 92 annotated + 62 BRSpeech-DF bonafide</td></tr>
+<tr><td>Speakers (Table V, double LODO)</td><td style="text-align:left;white-space:normal">281 = 189 TAGARELA/Spotify + 92 annotated (BRSpeech-DF excluded)</td></tr>
+<tr><td>Source corpora</td><td style="text-align:left;white-space:normal">CORAA (CORAL, NURC-RE, TED), Mozilla Common Voice, CoLingPB, CML-TTS, NURC-SP, Certas Palavras, CETUC/ALCaim, TAGARELA (Spotify podcasts)</td></tr>
+<tr><td>Selection criterion</td><td style="text-align:left;white-space:normal">multiple dialects and multiple recording chains, filtered for sample quality; no sociolinguistic labels used for selection</td></tr>
+<tr><td>Utterance budget</td><td style="text-align:left;white-space:normal">up to 40 utterances per speaker for natural sources; 50 for the utterance-budget sweep of Fig. 2 (1-100)</td></tr>
+<tr class="group-hdr"><th colspan="2">Synthetic speech pool</th></tr>
+<tr><td>Voices</td><td style="text-align:left;white-space:normal">57 TTS voices x 50 sentences (39 commercial + 18 open-source)</td></tr>
+<tr><td>Text set</td><td style="text-align:left;white-space:normal">the same 50 phonetically balanced sentences for every voice (sentences_50.txt)</td></tr>
+<tr><td>Longer-text set</td><td style="text-align:left;white-space:normal">sentences_51_100.txt, synthesized for the switching experiment, which needs &gt;= 2 marker detections per utterance</td></tr>
+<tr><td>Output format</td><td style="text-align:left;white-space:normal">16 kHz mono PCM WAV; providers returning another rate are resampled with torchaudio</td></tr>
+<tr><td>Note</td><td style="text-align:left;white-space:normal">three further voice directories exist on disk (azure_henrique, openai_verse, qwen3_bella) and are used only by the switching experiment, not by the 57-voice detection pool</td></tr>
+<tr class="group-hdr"><th colspan="2">Cross-dataset benchmarks</th></tr>
+<tr><td>BRSpeech-DF</td><td style="text-align:left;white-space:normal">official train/validation/test splits (Table III)</td></tr>
+<tr><td>FakeBRAccent</td><td style="text-align:left;white-space:normal">no official split; speaker-disjoint 5-fold CV over 10 seeds, since the same speaker appears in both bonafide and spoof parts (Table IV)</td></tr>
+<tr><td>MLAAD (pt subset)</td><td style="text-align:left;white-space:normal">16 TTS systems; synthetic only, so training always draws natural speech from the other sources (Table V)</td></tr>
+<tr class="group-hdr"><th colspan="2">Audio front-end</th></tr>
+<tr><td>Sample rate</td><td style="text-align:left;white-space:normal">16 kHz mono throughout</td></tr>
+<tr><td>Marker localization</td><td style="text-align:left;white-space:normal">ZIPA phone recognizer in forced-alignment mode (ONNX CTC, 20 ms frames)</td></tr>
+<tr><td>Marker window</td><td style="text-align:left;white-space:normal">+/- 80 ms around the detected marker frame; /d,t/ uses a broad window for spectral moments and a narrow +/- 2-frame window for ZIPA probabilities</td></tr>
+<tr><td>PhoneticXeus</td><td style="text-align:left;white-space:normal">group-pooled phone logits at the same marker frames (+/- 2 frames)</td></tr>
+<tr><td>Vowel formants</td><td style="text-align:left;white-space:normal">parselmouth Burg, 5 formants, 5000 Hz ceiling, 25 ms window, 50 Hz pre-emphasis, queried at ZIPA vowel spikes</td></tr>
+<tr><td>Channel normalization (Table V only)</td><td style="text-align:left;white-space:normal">librosa silence trim at top_db=30, RMS normalization to 0.05 with 0.99 peak safety, and cepstral mean normalization of the MFCC block</td></tr>
+<tr class="group-hdr"><th colspan="2">Feature blocks</th></tr>
+<tr><td>ZIPA (46D)</td><td style="text-align:left;white-space:normal">6 spectral moments + windowed CTC phone posteriors for each of the three markers</td></tr>
+<tr><td>Formants (29D)</td><td style="text-align:left;white-space:normal">per-vowel mean F1/F2/F3 for a, E, e, i, O, o, u (21D) + long-term formant mean/SD (6D) + long-term F0 mean/SD (2D)</td></tr>
+<tr><td>PhoneticXeus</td><td style="text-align:left;white-space:normal">group-pooled phone logits at marker positions</td></tr>
+<tr><td>Aggregation</td><td style="text-align:left;white-space:normal">per-speaker mean over that speaker&#x27;s clips; missing vowels imputed with the natural-pool column mean</td></tr>
+<tr class="group-hdr"><th colspan="2">Models and cross-validation</th></tr>
+<tr><td>KDE (Table I)</td><td style="text-align:left;white-space:normal">Gaussian kernel, bandwidth 2x Scott, OOD threshold at the 5th percentile of the training log-likelihood, 5-fold, seed 42</td></tr>
+<tr><td>Dimensionality reduction</td><td style="text-align:left;white-space:normal">t-SNE perplexity 40 / 1000 iterations / PCA init (transductive); Isomap 15 neighbours; PCA 5 components; seed 42</td></tr>
+<tr><td>Supervised detection (Table II)</td><td style="text-align:left;white-space:normal">XGBoost 400 trees, depth 4, lr 0.05, subsample and colsample 0.8; balanced 5-fold CV over 20 seeds; StandardScaler</td></tr>
+<tr><td>Cross-dataset (Table V)</td><td style="text-align:left;white-space:normal">XGBoost 400 trees, depth 5, lr 0.05, subsample and colsample 0.8, scale_pos_weight, seed 0</td></tr>
+<tr><td>Realization classifiers (Fig. 4)</td><td style="text-align:left;white-space:normal">XGBoost 300 trees, depth 4, lr 0.05, subsample and colsample 0.9, L2 1.0, seed 0, on [spec6 | ZIPA | PhoneticXeus logits]</td></tr>
+<tr><td>Metric</td><td style="text-align:left;white-space:normal">EER computed by sweeping the score threshold; accuracy at the EER operating point</td></tr>
+</tbody></table></div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Distributions -->
+<section id="distributions">
+  <h2>More feature distributions</h2>
+  <p class="caption">Figure 3 of the paper shows three of these panels. The features below are the
+    most discriminative interpretable features for the natural-versus-synthetic contrast, ranked by
+    tree-ensemble importance: the top 12 by mean absolute SHAP value of an XGBoost classifier and the top
+    12 by RandomForest impurity importance, both fitted on the same 364 natural and 57 synthetic speakers
+    (the two rankings agree with Spearman &rho;&nbsp;=&nbsp;0.72). Each panel is labelled with the rankings
+    that selected it. Importance is multivariate, so a feature can be useful to the classifier in combination
+    with others while showing little separation on its own; two of the panels below are of that kind and carry
+    a small, non-significant &delta;.</p>
+<div class="note"><strong>On the effect size.</strong> These panels report Cliff&rsquo;s
+    &delta;, computed from the Mann-Whitney U statistic as 2U/(mn)&nbsp;&minus;&nbsp;1, with &delta;&nbsp;&gt;&nbsp;0
+    meaning the synthetic distribution is stochastically larger. The submitted version of Figure 3 printed
+    Cohen&rsquo;s d in those boxes by mistake; Cliff&rsquo;s &delta; is bounded to [&minus;1,&nbsp;1], and the
+    correct values for the two univariate panels of that figure are &delta;&nbsp;=&nbsp;+0.77 and
+    +0.66. The vowel panels are bivariate, so they report the Mahalanobis distance D between group centroids
+    with a Hotelling T&sup2; p-value instead.</div>
+<h3>Marker-localized features</h3><div class="fig-grid">
+<figure><img loading="lazy" src="img/dist_S_zipa_s.png" alt="S_zipa_s distribution"><figcaption><code>S_zipa_s</code> &middot; /s/ coda &middot; &delta;=+0.77, p=6e-21 &middot; SHAP+RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_R_spec_peak.png" alt="R_spec_peak distribution"><figcaption><code>R_spec_peak</code> &middot; /r/ coda &middot; &delta;=+0.53, p=1e-10 &middot; SHAP+RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_R_spec_centroid.png" alt="R_spec_centroid distribution"><figcaption><code>R_spec_centroid</code> &middot; /r/ coda &middot; &delta;=+0.66, p=1e-15 &middot; SHAP+RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_S_spec_centroid.png" alt="S_spec_centroid distribution"><figcaption><code>S_spec_centroid</code> &middot; /s/ coda &middot; &delta;=+0.63, p=1e-14 &middot; SHAP+RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_S_zipa_ʂ.png" alt="S_zipa_ʂ distribution"><figcaption><code>S_zipa_ʂ</code> &middot; /s/ coda &middot; &delta;=-0.60, p=3e-13 &middot; SHAP+RF &middot; log axis</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_S_zipa_ʒ.png" alt="S_zipa_ʒ distribution"><figcaption><code>S_zipa_ʒ</code> &middot; /s/ coda &middot; &delta;=+0.51, p=6e-10 &middot; SHAP &middot; log axis</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_DT_zipa2_t.png" alt="DT_zipa2_t distribution"><figcaption><code>DT_zipa2_t</code> &middot; /d,t/ palatalization &middot; &delta;=+0.55, p=2e-11 &middot; SHAP+RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_S_zipa_z.png" alt="S_zipa_z distribution"><figcaption><code>S_zipa_z</code> &middot; /s/ coda &middot; &delta;=+0.48, p=4e-09 &middot; SHAP &middot; log axis</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_DT_zipa_t.png" alt="DT_zipa_t distribution"><figcaption><code>DT_zipa_t</code> &middot; /d,t/ palatalization &middot; &delta;=+0.54, p=5e-11 &middot; SHAP+RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_DT_zipa_ʃ.png" alt="DT_zipa_ʃ distribution"><figcaption><code>DT_zipa_ʃ</code> &middot; /d,t/ palatalization &middot; &delta;=+0.60, p=3e-13 &middot; SHAP+RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_R_zipa_ʀ.png" alt="R_zipa_ʀ distribution"><figcaption><code>R_zipa_ʀ</code> &middot; /r/ coda &middot; &delta;=+0.36, p=1e-05 &middot; SHAP &middot; log axis</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_S_zipa_f.png" alt="S_zipa_f distribution"><figcaption><code>S_zipa_f</code> &middot; /s/ coda &middot; &delta;=-0.03, p=7e-01 &middot; SHAP &middot; log axis</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_S_zipa_ʃ.png" alt="S_zipa_ʃ distribution"><figcaption><code>S_zipa_ʃ</code> &middot; /s/ coda &middot; &delta;=-0.67, p=2e-16 &middot; RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_DT_zipa_ʒ.png" alt="DT_zipa_ʒ distribution"><figcaption><code>DT_zipa_ʒ</code> &middot; /d,t/ palatalization &middot; &delta;=+0.52, p=3e-10 &middot; RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_DT_zipa2_ʃ.png" alt="DT_zipa2_ʃ distribution"><figcaption><code>DT_zipa2_ʃ</code> &middot; /d,t/ palatalization &middot; &delta;=+0.62, p=6e-14 &middot; RF</figcaption></figure>
+<figure><img loading="lazy" src="img/dist_DT_zipa2_ʒ.png" alt="DT_zipa2_ʒ distribution"><figcaption><code>DT_zipa2_ʒ</code> &middot; /d,t/ palatalization &middot; &delta;=+0.52, p=3e-10 &middot; RF</figcaption></figure>
+</div>
+<h3>Vowel spaces (F1 &times; F2, 95% ellipses)</h3><div class="fig-grid">
+<figure><img loading="lazy" src="img/vowel_oopen-ɔ.png" alt="/o/ and /ɔ/ (paired, as in Figure 3) vowel space"><figcaption>/o/ and /ɔ/ (paired, as in Figure 3) &middot; D=0.53, p=1e-06</figcaption></figure>
+<figure><img loading="lazy" src="img/vowel_eopen-ɛ.png" alt="/e/ and /ɛ/ (paired, as in Figure 3) vowel space"><figcaption>/e/ and /ɛ/ (paired, as in Figure 3) &middot; D=0.48, p=2e-05</figcaption></figure>
+<figure><img loading="lazy" src="img/vowel_a.png" alt="/a/ vowel space"><figcaption>/a/ &middot; D=0.56, p=6e-04</figcaption></figure>
+<figure><img loading="lazy" src="img/vowel_open-e.png" alt="/ɛ/ vowel space"><figcaption>/ɛ/ &middot; D=0.58, p=3e-04</figcaption></figure>
+<figure><img loading="lazy" src="img/vowel_e.png" alt="/e/ vowel space"><figcaption>/e/ &middot; D=0.48, p=4e-03</figcaption></figure>
+<figure><img loading="lazy" src="img/vowel_i.png" alt="/i/ vowel space"><figcaption>/i/ &middot; D=0.89, p=1e-08</figcaption></figure>
+<figure><img loading="lazy" src="img/vowel_open-o.png" alt="/ɔ/ vowel space"><figcaption>/ɔ/ &middot; D=0.50, p=3e-03</figcaption></figure>
+<figure><img loading="lazy" src="img/vowel_o.png" alt="/o/ vowel space"><figcaption>/o/ &middot; D=0.86, p=3e-08</figcaption></figure>
+<figure><img loading="lazy" src="img/vowel_u.png" alt="/u/ vowel space"><figcaption>/u/ &middot; D=1.02, p=4e-11</figcaption></figure>
+</div>
+<h3>Effect size for every feature</h3>
+<div class="table-scroll">
+<table class="data-table">
+<thead><tr>
+<th>Feature</th>
+<th>Family</th>
+<th>Natural median</th>
+<th>Synthetic median</th>
+<th>Cliff&#x27;s δ</th>
+<th>Mann-Whitney p</th>
+</tr></thead><tbody>
+<tr>
+<td>S_zipa_s</td>
+<td>zipa</td>
+<td>0.2084</td>
+<td>0.2958</td>
+<td>+0.773</td>
+<td>6.2e-21</td>
+</tr>
+<tr>
+<td>S_zipa_ʃ</td>
+<td>zipa</td>
+<td>0.08969</td>
+<td>0.02114</td>
+<td>-0.675</td>
+<td>2.5e-16</td>
+</tr>
+<tr>
+<td>R_spec_centroid</td>
+<td>zipa</td>
+<td>855.5</td>
+<td>1172</td>
+<td>+0.661</td>
+<td>9.9e-16</td>
+</tr>
+<tr>
+<td>S_spec_variance</td>
+<td>zipa</td>
+<td>1.884e+06</td>
+<td>2.74e+06</td>
+<td>+0.634</td>
+<td>1.4e-14</td>
+</tr>
+<tr>
+<td>S_spec_centroid</td>
+<td>zipa</td>
+<td>2296</td>
+<td>3214</td>
+<td>+0.633</td>
+<td>1.5e-14</td>
+</tr>
+<tr>
+<td>DT_zipa2_ʃ</td>
+<td>zipa</td>
+<td>0.01145</td>
+<td>0.04069</td>
+<td>+0.619</td>
+<td>5.5e-14</td>
+</tr>
+<tr>
+<td>DT_zipa_ʃ</td>
+<td>zipa</td>
+<td>0.01137</td>
+<td>0.04069</td>
+<td>+0.602</td>
+<td>2.6e-13</td>
+</tr>
+<tr>
+<td>S_zipa_ʂ</td>
+<td>zipa</td>
+<td>5.181e-05</td>
+<td>1.808e-05</td>
+<td>-0.601</td>
+<td>3.0e-13</td>
+</tr>
+<tr>
+<td>R_spec_variance</td>
+<td>zipa</td>
+<td>3.023e+05</td>
+<td>5.513e+05</td>
+<td>+0.563</td>
+<td>8.0e-12</td>
+</tr>
+<tr>
+<td>S_spec_logBR</td>
+<td>zipa</td>
+<td>-0.2791</td>
+<td>0.1812</td>
+<td>+0.561</td>
+<td>9.3e-12</td>
+</tr>
+<tr>
+<td>MF_i_F3</td>
+<td>formant</td>
+<td>2790</td>
+<td>2904</td>
+<td>+0.555</td>
+<td>1.6e-11</td>
+</tr>
+<tr>
+<td>DT_zipa2_t</td>
+<td>zipa</td>
+<td>0.1426</td>
+<td>0.1711</td>
+<td>+0.551</td>
+<td>2.3e-11</td>
+</tr>
+<tr>
+<td>S_spec_peak</td>
+<td>zipa</td>
+<td>1506</td>
+<td>2198</td>
+<td>+0.543</td>
+<td>4.1e-11</td>
+</tr>
+<tr>
+<td>DT_zipa_t</td>
+<td>zipa</td>
+<td>0.1428</td>
+<td>0.1711</td>
+<td>+0.541</td>
+<td>5.0e-11</td>
+</tr>
+<tr>
+<td>R_spec_peak</td>
+<td>zipa</td>
+<td>613.5</td>
+<td>733.9</td>
+<td>+0.529</td>
+<td>1.3e-10</td>
+</tr>
+<tr>
+<td>MF_u_F1</td>
+<td>formant</td>
+<td>550.2</td>
+<td>669.4</td>
+<td>+0.529</td>
+<td>1.4e-10</td>
+</tr>
+<tr>
+<td>DT_zipa2_ʒ</td>
+<td>zipa</td>
+<td>0.01452</td>
+<td>0.04539</td>
+<td>+0.520</td>
+<td>2.8e-10</td>
+</tr>
+<tr>
+<td>DT_zipa_ʒ</td>
+<td>zipa</td>
+<td>0.01421</td>
+<td>0.04539</td>
+<td>+0.517</td>
+<td>3.4e-10</td>
+</tr>
+<tr>
+<td>MF_i_F2</td>
+<td>formant</td>
+<td>1922</td>
+<td>2047</td>
+<td>+0.511</td>
+<td>5.3e-10</td>
+</tr>
+<tr>
+<td>S_zipa_ʒ</td>
+<td>zipa</td>
+<td>0.001135</td>
+<td>0.003197</td>
+<td>+0.510</td>
+<td>5.9e-10</td>
+</tr>
+<tr>
+<td>S_zipa_z</td>
+<td>zipa</td>
+<td>0.001823</td>
+<td>0.00323</td>
+<td>+0.484</td>
+<td>4.1e-09</td>
+</tr>
+<tr>
+<td>LTFD_F1m</td>
+<td>formant</td>
+<td>584.7</td>
+<td>640.6</td>
+<td>+0.468</td>
+<td>1.3e-08</td>
+</tr>
+<tr>
+<td>MF_i_F1</td>
+<td>formant</td>
+<td>606.5</td>
+<td>734.5</td>
+<td>+0.455</td>
+<td>3.4e-08</td>
+</tr>
+<tr>
+<td>S_spec_skew</td>
+<td>zipa</td>
+<td>1.52</td>
+<td>0.9438</td>
+<td>-0.435</td>
+<td>1.3e-07</td>
+</tr>
+<tr>
+<td>S_zipa_ɕ</td>
+<td>zipa</td>
+<td>8.013e-05</td>
+<td>2.354e-05</td>
+<td>-0.424</td>
+<td>2.6e-07</td>
+</tr>
+</tbody></table>
+</div>
+<p class="caption">The 25 features with the largest absolute effect size, out of the 75 in the phonological feature space. The complete table is available as a CSV below. These p-values are not corrected for multiple comparisons and the features were chosen by an importance ranking fitted on the same data, so they describe the observed separation rather than test a pre-registered hypothesis.</p>
+<div class="filelist"><a href="data/feature_effect_sizes.csv">feature_effect_sizes.csv (all 75 features)</a></div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Switching -->
+<section id="switching">
+  <h2>Within-utterance switching: classifier accuracy and clustered statistics</h2>
+  <p class="caption">Figure 4 of the paper measures how often a voice changes its realization of
+    the same marker inside one utterance, using the binary Shannon entropy of the per-utterance mean
+    dialectal probability given by a realization classifier. Two questions about that figure are answered
+    here: how accurate those classifiers are, and what the comparison looks like when utterances are treated
+    as clustered within speakers and voices rather than as independent.</p>
+<h3>Realization-classifier accuracy</h3>
+<div class="table-scroll">
+<table class="data-table">
+<thead><tr>
+<th>Marker</th>
+<th>Task</th>
+<th>Holdout</th>
+<th>Clips</th>
+<th>Classes</th>
+<th>Accuracy</th>
+<th>Balanced acc.</th>
+<th>Macro F1</th>
+<th>Majority baseline</th>
+</tr></thead><tbody>
+<tr>
+<td>S</td>
+<td>/s/ coda (chiado vs sibilant)</td>
+<td>leave-one-dataset-out</td>
+<td>9256</td>
+<td>2</td>
+<td>0.781</td>
+<td>0.645</td>
+<td>0.659</td>
+<td>0.762</td>
+</tr>
+<tr>
+<td>S</td>
+<td>/s/ coda (chiado vs sibilant)</td>
+<td>leave-one-speaker-out</td>
+<td>9256</td>
+<td>2</td>
+<td>0.833</td>
+<td>0.718</td>
+<td>0.741</td>
+<td>0.762</td>
+</tr>
+<tr>
+<td>R</td>
+<td>/r/ coda (carioca vs tap vs caipira)</td>
+<td>leave-one-dataset-out</td>
+<td>3117</td>
+<td>3</td>
+<td>0.635</td>
+<td>0.505</td>
+<td>0.458</td>
+<td>0.492</td>
+</tr>
+<tr>
+<td>R</td>
+<td>/r/ coda (carioca vs tap vs caipira)</td>
+<td>leave-one-speaker-out</td>
+<td>3117</td>
+<td>3</td>
+<td>0.686</td>
+<td>0.638</td>
+<td>0.642</td>
+<td>0.492</td>
+</tr>
+<tr>
+<td>DT</td>
+<td>/d,t/ (palatalized vs not)</td>
+<td>leave-one-dataset-out</td>
+<td>3471</td>
+<td>2</td>
+<td>0.813</td>
+<td>0.589</td>
+<td>0.602</td>
+<td>0.830</td>
+</tr>
+<tr>
+<td>DT</td>
+<td>/d,t/ (palatalized vs not)</td>
+<td>leave-one-speaker-out</td>
+<td>3471</td>
+<td>2</td>
+<td>0.844</td>
+<td>0.620</td>
+<td>0.645</td>
+<td>0.830</td>
+</tr>
+</tbody></table>
+</div>
+<p class="caption">Out-of-fold performance of the classifiers that produce the switching metric, on the human-annotated clips. Leave-one-dataset-out is the stricter protocol: the classifier never sees the held-out source corpus, so it cannot exploit its recording characteristics.</p>
+<div class="note"><strong>How to read these numbers.</strong> All three classifiers beat
+    chance on balanced accuracy (0.72, 0.64 and 0.62 against 0.50, 0.33 and 0.50 under speaker holdout), so
+    each carries real information about the realization. Raw accuracy is a different matter where the classes
+    are skewed: /d,t/ is palatalized in 83% of the annotated clips, and under the stricter dataset holdout the
+    classifier&rsquo;s raw accuracy (0.81) sits just below that majority rate, because it trades errors on the
+    majority class for gains on the minority one. The switching metric consumes the probability rather than
+    the decision, and the natural and synthetic sides are scored by the same classifier, so a miscalibrated
+    motor affects both sides alike; but the absolute switching values should not be read as exact
+    realization rates. This is the same caveat the project records for the switching protocol in general.</div>
+<h3>Clustered inference</h3>
+<div class="note"><strong>Why this table exists.</strong> The utterances compared in Figure 4
+    are not independent: they are clustered within 57 TTS voices, drawn from 8 providers, and within 92
+    natural speakers, drawn from 6 source corpora. A test over utterances therefore overstates precision.
+    Repeating the comparison with one value per voice and per speaker, and with a cluster bootstrap that
+    resamples voices, speakers, providers and source corpora, leaves the conclusion intact and in fact
+    strengthens the effect for /r/ coda, /d,t/ palatalization and the aggregate. The exception is /s/ coda:
+    its small utterance-level effect does not survive clustering, so no significance is claimed for that
+    marker.</div>
+<div class="table-scroll">
+<table class="data-table">
+<thead><tr>
+<th>Marker</th>
+<th>Unit of analysis</th>
+<th>n synthetic vs natural</th>
+<th>Synthetic mean</th>
+<th>Natural mean</th>
+<th>Cliff&#x27;s δ</th>
+<th>p</th>
+<th>Cluster-bootstrap 95% CI</th>
+</tr></thead><tbody>
+<tr>
+<td>S</td>
+<td>utterance</td>
+<td>1731 vs 2341</td>
+<td>0.710</td>
+<td>0.673</td>
+<td>+0.076</td>
+<td>3.5e-05</td>
+<td>[-0.03, +0.18]</td>
+</tr>
+<tr>
+<td>S</td>
+<td>speaker / voice</td>
+<td>57 vs 84</td>
+<td>0.709</td>
+<td>0.681</td>
+<td>+0.083</td>
+<td>4.0e-01</td>
+<td>—</td>
+</tr>
+<tr>
+<td>S</td>
+<td>provider / corpus</td>
+<td>8 vs 84</td>
+<td>0.715</td>
+<td>0.681</td>
+<td>+0.074</td>
+<td>7.4e-01</td>
+<td>—</td>
+</tr>
+<tr>
+<td>R</td>
+<td>utterance</td>
+<td>406 vs 760</td>
+<td>0.897</td>
+<td>0.677</td>
+<td>+0.486</td>
+<td>1.1e-42</td>
+<td>[+0.40, +0.57]</td>
+</tr>
+<tr>
+<td>R</td>
+<td>speaker / voice</td>
+<td>56 vs 71</td>
+<td>0.886</td>
+<td>0.653</td>
+<td>+0.829</td>
+<td>1.2e-15</td>
+<td>—</td>
+</tr>
+<tr>
+<td>R</td>
+<td>provider / corpus</td>
+<td>8 vs 71</td>
+<td>0.896</td>
+<td>0.653</td>
+<td>+0.908</td>
+<td>5.6e-07</td>
+<td>—</td>
+</tr>
+<tr>
+<td>DT</td>
+<td>utterance</td>
+<td>957 vs 864</td>
+<td>0.801</td>
+<td>0.520</td>
+<td>+0.553</td>
+<td>1.8e-92</td>
+<td>[+0.45, +0.64]</td>
+</tr>
+<tr>
+<td>DT</td>
+<td>speaker / voice</td>
+<td>57 vs 68</td>
+<td>0.804</td>
+<td>0.509</td>
+<td>+0.868</td>
+<td>7.7e-17</td>
+<td>—</td>
+</tr>
+<tr>
+<td>DT</td>
+<td>provider / corpus</td>
+<td>8 vs 68</td>
+<td>0.812</td>
+<td>0.509</td>
+<td>+0.882</td>
+<td>2.3e-06</td>
+<td>—</td>
+</tr>
+<tr>
+<td>AGG</td>
+<td>utterance</td>
+<td>3094 vs 3965</td>
+<td>0.763</td>
+<td>0.640</td>
+<td>+0.252</td>
+<td>8.2e-74</td>
+<td>[+0.19, +0.32]</td>
+</tr>
+<tr>
+<td>AGG</td>
+<td>speaker / voice</td>
+<td>57 vs 92</td>
+<td>0.764</td>
+<td>0.631</td>
+<td>+0.661</td>
+<td>1.3e-11</td>
+<td>—</td>
+</tr>
+<tr>
+<td>AGG</td>
+<td>provider / corpus</td>
+<td>8 vs 92</td>
+<td>0.772</td>
+<td>0.631</td>
+<td>+0.709</td>
+<td>3.9e-04</td>
+<td>—</td>
+</tr>
+</tbody></table>
+</div>
+<p class="caption">The utterance rows reproduce the values printed in Figure 4. The confidence interval comes from resampling whole clusters (voices and speakers) with replacement, 4000 times, and applies to the utterance-level statistic.</p>
+<div class="table-scroll">
+<table class="data-table">
+<thead><tr>
+<th>Marker</th>
+<th>ICC(1) synthetic voices</th>
+<th>Design effect</th>
+<th>ICC(1) natural speakers</th>
+<th>Design effect</th>
+</tr></thead><tbody>
+<tr>
+<td>S</td>
+<td>0.167</td>
+<td>5.9</td>
+<td>0.379</td>
+<td>11.2</td>
+</tr>
+<tr>
+<td>R</td>
+<td>0.216</td>
+<td>2.3</td>
+<td>0.188</td>
+<td>2.8</td>
+</tr>
+<tr>
+<td>DT</td>
+<td>0.072</td>
+<td>2.1</td>
+<td>0.312</td>
+<td>4.6</td>
+</tr>
+<tr>
+<td>AGG</td>
+<td>0.053</td>
+<td>3.8</td>
+<td>0.163</td>
+<td>7.8</td>
+</tr>
+</tbody></table>
+</div>
+<p class="caption">Intra-cluster correlation of the switching value and the resulting design effect, that is, the factor by which the effective sample size is smaller than the number of utterances.</p>
+<div class="fig-wide"><img loading="lazy" src="img/exp39_clustered.png" alt="Within-utterance switching, aggregated per voice and per speaker"></div>
+<p class="caption">Figure 4 recomputed with one value per TTS voice and per natural speaker. Annotations give the speaker/voice-level Cliff&rsquo;s &delta; with its p-value and the cluster-bootstrap interval for the utterance-level statistic.</p>
+<div class="filelist"><a href="data/exp39_clf_accuracy.csv">exp39_clf_accuracy.csv</a><a href="data/exp39_clustered.csv">exp39_clustered.csv</a></div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Table V breakdown -->
+<section id="crossdataset">
+  <h2>Cross-dataset detection, per held-out group</h2>
+  <p class="caption">The paper&rsquo;s Table V reports a double leave-one-dataset-out protocol: for every pair
+  of one held-out TTS group and one held-out natural corpus, a detector is trained on everything else and
+  evaluated on that pair. This gives 24 synthetic groups (8 curated TTS providers and 16 MLAAD systems)
+  &times; 7 natural corpora = 168 held-out cells per feature set. The tables below open up the two feature
+  sets reported in the paper.</p>
+  <div class="table-scroll">
+<table class="data-table">
+<thead><tr>
+<th>Feature set</th>
+<th>Overall EER (%)</th>
+<th>Curated dataset</th>
+<th>MLAAD</th>
+<th>Overall, unweighted</th>
+</tr></thead><tbody>
+<tr>
+<td>ECAPA+Formants (221D)</td>
+<td>6.09</td>
+<td>11.30</td>
+<td>3.49</td>
+<td>10.41</td>
+</tr>
+<tr>
+<td>ZIPA+PX+Formants (121D)</td>
+<td>8.13</td>
+<td>12.13</td>
+<td>6.13</td>
+<td>9.82</td>
+</tr>
+</tbody></table>
+</div>
+<p class="caption">The first three columns are the paper’s Table V values: means over the whole cross, weighted by the number of speakers in each held-out natural fold. Because the TAGARELA/Spotify fold carries 189 of the 281 natural speakers, it dominates that average; the last column gives the same cross weighting every fold equally.</p>
+
+  <h3>By held-out TTS group</h3>
+  <div class="table-scroll">
+<table class="data-table">
+<thead><tr>
+<th>Held-out TTS group</th>
+<th>Source</th>
+<th>Voices / systems</th>
+<th>ECAPA+Formants EER (%)</th>
+<th>ZIPA+PX+Formants EER (%)</th>
+</tr></thead><tbody>
+<tr>
+<td>azure</td>
+<td>curated</td>
+<td>10</td>
+<td style="background:rgb(247, 231, 229); color:#1a1a2e">4.95</td>
+<td style="background:rgb(243, 218, 216); color:#1a1a2e">7.44</td>
+</tr>
+<tr>
+<td>elevenlabs</td>
+<td>curated</td>
+<td>10</td>
+<td style="background:rgb(235, 193, 189); color:#1a1a2e">12.49</td>
+<td style="background:rgb(238, 200, 196); color:#1a1a2e">11.10</td>
+</tr>
+<tr>
+<td>f5</td>
+<td>curated</td>
+<td>2</td>
+<td style="background:rgb(220, 146, 138); color:#1a1a2e">22.06</td>
+<td style="background:rgb(205, 96, 85); color:#fff">32.03</td>
+</tr>
+<tr>
+<td>google</td>
+<td>curated</td>
+<td>10</td>
+<td style="background:rgb(236, 195, 191); color:#1a1a2e">12.03</td>
+<td style="background:rgb(230, 177, 171); color:#1a1a2e">15.80</td>
+</tr>
+<tr>
+<td>kokoro</td>
+<td>curated</td>
+<td>3</td>
+<td style="background:rgb(253, 250, 249); color:#1a1a2e">1.07</td>
+<td style="background:rgb(254, 251, 251); color:#1a1a2e">0.71</td>
+</tr>
+<tr>
+<td>openai</td>
+<td>curated</td>
+<td>9</td>
+<td style="background:rgb(249, 236, 235); color:#1a1a2e">3.79</td>
+<td style="background:rgb(250, 238, 237); color:#1a1a2e">3.36</td>
+</tr>
+<tr>
+<td>piper</td>
+<td>curated</td>
+<td>4</td>
+<td style="background:rgb(206, 100, 89); color:#fff">31.40</td>
+<td style="background:rgb(224, 157, 150); color:#1a1a2e">19.84</td>
+</tr>
+<tr>
+<td>qwen3</td>
+<td>curated</td>
+<td>9</td>
+<td style="background:rgb(251, 242, 241); color:#1a1a2e">2.61</td>
+<td style="background:rgb(244, 222, 219); color:#1a1a2e">6.76</td>
+</tr>
+<tr>
+<td>Fish-S2-Pro</td>
+<td>MLAAD</td>
+<td>4</td>
+<td style="background:rgb(254, 253, 253); color:#1a1a2e">0.36</td>
+<td style="background:rgb(255, 255, 255); color:#1a1a2e">0.00</td>
+</tr>
+<tr>
+<td>Hume TADA-3B-ML</td>
+<td>MLAAD</td>
+<td>4</td>
+<td style="background:rgb(253, 250, 249); color:#1a1a2e">1.07</td>
+<td style="background:rgb(238, 203, 199); color:#1a1a2e">10.49</td>
+</tr>
+<tr>
+<td>LEMAS-TTS</td>
+<td>MLAAD</td>
+<td>4</td>
+<td style="background:rgb(253, 250, 249); color:#1a1a2e">1.07</td>
+<td style="background:rgb(254, 253, 253); color:#1a1a2e">0.36</td>
+</tr>
+<tr>
+<td>Llasa-1B-Multilingual</td>
+<td>MLAAD</td>
+<td>1</td>
+<td style="background:rgb(251, 243, 242); color:#1a1a2e">2.49</td>
+<td style="background:rgb(241, 211, 208); color:#1a1a2e">8.90</td>
+</tr>
+<tr>
+<td>MOSS-TTS-1.7B</td>
+<td>MLAAD</td>
+<td>4</td>
+<td style="background:rgb(254, 253, 253); color:#1a1a2e">0.36</td>
+<td style="background:rgb(253, 250, 249); color:#1a1a2e">1.07</td>
+</tr>
+<tr>
+<td>MOSS-TTS-8B</td>
+<td>MLAAD</td>
+<td>4</td>
+<td style="background:rgb(254, 253, 253); color:#1a1a2e">0.36</td>
+<td style="background:rgb(245, 225, 223); color:#1a1a2e">6.05</td>
+</tr>
+<tr>
+<td>OmniVoice</td>
+<td>MLAAD</td>
+<td>4</td>
+<td style="background:rgb(254, 253, 253); color:#1a1a2e">0.36</td>
+<td style="background:rgb(255, 255, 255); color:#1a1a2e">0.00</td>
+</tr>
+<tr>
+<td>OpenAI TTS-1 HD</td>
+<td>MLAAD</td>
+<td>13</td>
+<td style="background:rgb(251, 243, 242); color:#1a1a2e">2.38</td>
+<td style="background:rgb(240, 209, 206); color:#1a1a2e">9.28</td>
+</tr>
+<tr>
+<td>Qwen3-TTS-12Hz-0.6B-Base</td>
+<td>MLAAD</td>
+<td>5</td>
+<td style="background:rgb(254, 251, 251); color:#1a1a2e">0.71</td>
+<td style="background:rgb(255, 255, 255); color:#1a1a2e">0.00</td>
+</tr>
+<tr>
+<td>Qwen3-TTS-12Hz-1.7B-Base</td>
+<td>MLAAD</td>
+<td>4</td>
+<td style="background:rgb(254, 253, 253); color:#1a1a2e">0.36</td>
+<td style="background:rgb(254, 253, 253); color:#1a1a2e">0.36</td>
+</tr>
+<tr>
+<td>VoxCPM2</td>
+<td>MLAAD</td>
+<td>4</td>
+<td style="background:rgb(253, 250, 249); color:#1a1a2e">1.07</td>
+<td style="background:rgb(230, 177, 171); color:#1a1a2e">15.84</td>
+</tr>
+<tr>
+<td>Voxtral</td>
+<td>MLAAD</td>
+<td>2</td>
+<td style="background:rgb(240, 209, 206); color:#1a1a2e">9.25</td>
+<td style="background:rgb(222, 152, 145); color:#1a1a2e">20.82</td>
+</tr>
+<tr>
+<td>Bark</td>
+<td>MLAAD</td>
+<td>1</td>
+<td style="background:rgb(201, 86, 74); color:#fff">34.16</td>
+<td style="background:rgb(216, 132, 123); color:#1a1a2e">24.91</td>
+</tr>
+<tr>
+<td>XTTS v1.1</td>
+<td>MLAAD</td>
+<td>1</td>
+<td style="background:rgb(255, 255, 255); color:#1a1a2e">0.00</td>
+<td style="background:rgb(255, 255, 255); color:#1a1a2e">0.00</td>
+</tr>
+<tr>
+<td>XTTS v2</td>
+<td>MLAAD</td>
+<td>1</td>
+<td style="background:rgb(253, 248, 247); color:#1a1a2e">1.42</td>
+<td style="background:rgb(255, 255, 255); color:#1a1a2e">0.00</td>
+</tr>
+<tr>
+<td>VITS (pt, CV)</td>
+<td>MLAAD</td>
+<td>1</td>
+<td style="background:rgb(254, 253, 253); color:#1a1a2e">0.36</td>
+<td style="background:rgb(255, 255, 255); color:#1a1a2e">0.00</td>
+</tr>
+</tbody></table>
+</div>
+<p class="caption">Each cell holds out that TTS group entirely — it appears in no training fold — and averages the resulting EER over the seven held-out natural corpora, weighted by their speaker counts. Groups with one or two voices give coarse EERs.</p>
+
+  <h3>By held-out natural corpus</h3>
+  <div class="table-scroll">
+<table class="data-table">
+<thead><tr>
+<th>Held-out natural corpus</th>
+<th>Speakers</th>
+<th>ECAPA+Formants: all</th>
+<th>curated</th>
+<th>MLAAD</th>
+<th>ZIPA+PX+Formants: all</th>
+<th>curated</th>
+<th>MLAAD</th>
+</tr></thead><tbody>
+<tr>
+<td>TAGARELA / Spotify (RE + SP)</td>
+<td>189</td>
+<td style="background:rgb(249, 237, 236); color:#1a1a2e">3.61</td>
+<td style="background:rgb(242, 214, 211); color:#1a1a2e">8.33</td>
+<td style="background:rgb(253, 249, 248); color:#1a1a2e">1.26</td>
+<td style="background:rgb(246, 226, 224); color:#1a1a2e">5.84</td>
+<td style="background:rgb(234, 189, 184); color:#1a1a2e">13.30</td>
+<td style="background:rgb(252, 245, 244); color:#1a1a2e">2.10</td>
+</tr>
+<tr>
+<td>annotated — hashed IDs</td>
+<td>43</td>
+<td style="background:rgb(240, 207, 203); color:#1a1a2e">9.75</td>
+<td style="background:rgb(227, 168, 162); color:#1a1a2e">17.63</td>
+<td style="background:rgb(246, 226, 224); color:#1a1a2e">5.81</td>
+<td style="background:rgb(227, 168, 162); color:#1a1a2e">17.48</td>
+<td style="background:rgb(239, 206, 202); color:#1a1a2e">9.97</td>
+<td style="background:rgb(222, 150, 142); color:#1a1a2e">21.24</td>
+</tr>
+<tr>
+<td>annotated — NAME_F/M IDs</td>
+<td>22</td>
+<td style="background:rgb(237, 198, 194); color:#1a1a2e">11.51</td>
+<td style="background:rgb(228, 170, 164); color:#1a1a2e">17.10</td>
+<td style="background:rgb(241, 212, 209); color:#1a1a2e">8.72</td>
+<td style="background:rgb(238, 200, 196); color:#1a1a2e">11.11</td>
+<td style="background:rgb(234, 189, 184); color:#1a1a2e">13.43</td>
+<td style="background:rgb(239, 206, 202); color:#1a1a2e">9.94</td>
+</tr>
+<tr>
+<td>annotated — YouTube-style IDs</td>
+<td>15</td>
+<td style="background:rgb(232, 182, 176); color:#1a1a2e">14.82</td>
+<td style="background:rgb(228, 171, 165); color:#1a1a2e">16.94</td>
+<td style="background:rgb(233, 187, 182); color:#1a1a2e">13.75</td>
+<td style="background:rgb(247, 230, 228); color:#1a1a2e">5.14</td>
+<td style="background:rgb(249, 236, 235); color:#1a1a2e">3.75</td>
+<td style="background:rgb(246, 226, 224); color:#1a1a2e">5.83</td>
+</tr>
+<tr>
+<td>annotated — numeric IDs</td>
+<td>6</td>
+<td style="background:rgb(231, 181, 175); color:#1a1a2e">15.05</td>
+<td style="background:rgb(213, 124, 115); color:#1a1a2e">26.39</td>
+<td style="background:rgb(240, 209, 205); color:#1a1a2e">9.38</td>
+<td style="background:rgb(236, 196, 191); color:#1a1a2e">11.99</td>
+<td style="background:rgb(233, 185, 180); color:#1a1a2e">14.17</td>
+<td style="background:rgb(238, 201, 197); color:#1a1a2e">10.90</td>
+</tr>
+<tr>
+<td>annotated — lowercase-name IDs</td>
+<td>4</td>
+<td style="background:rgb(249, 237, 236); color:#1a1a2e">3.54</td>
+<td style="background:rgb(248, 233, 232); color:#1a1a2e">4.38</td>
+<td style="background:rgb(250, 240, 238); color:#1a1a2e">3.12</td>
+<td style="background:rgb(253, 250, 249); color:#1a1a2e">1.04</td>
+<td style="background:rgb(255, 255, 255); color:#1a1a2e">0.00</td>
+<td style="background:rgb(253, 247, 247); color:#1a1a2e">1.56</td>
+</tr>
+<tr>
+<td>annotated — other</td>
+<td>2</td>
+<td style="background:rgb(232, 183, 178); color:#1a1a2e">14.58</td>
+<td style="background:rgb(225, 162, 156); color:#1a1a2e">18.75</td>
+<td style="background:rgb(235, 193, 189); color:#1a1a2e">12.50</td>
+<td style="background:rgb(230, 175, 169); color:#1a1a2e">16.17</td>
+<td style="background:rgb(232, 184, 179); color:#1a1a2e">14.38</td>
+<td style="background:rgb(228, 171, 165); color:#1a1a2e">17.07</td>
+</tr>
+</tbody></table>
+</div>
+<p class="caption">Each row holds out that natural corpus entirely; the EER is averaged over all 24 held-out TTS groups (and over the 8 curated / 16 MLAAD subsets). The annotated speakers are grouped by the identifier pattern of their source corpus, following the same split used in the switching experiments; folds with fewer than ten speakers are noisy.</p>
+
+  <h3>Full grid</h3>
+  <div class="fig-grid">
+    <figure><img loading="lazy" src="img/t5_grid_loc_ecapa_formant.png" alt="ECAPA+Formants held-out EER grid"><figcaption>ECAPA+Formants: every held-out (TTS group, natural corpus) cell.</figcaption></figure>
+    <figure><img loading="lazy" src="img/t5_grid_explainable_only.png" alt="ZIPA+PX+Formants held-out EER grid"><figcaption>ZIPA+PX+Formants: the fully interpretable feature set.</figcaption></figure>
+  </div>
+  <div class="filelist">
+    <a href="data/t5_per_synth_group.csv">t5_per_synth_group.csv</a>
+    <a href="data/t5_per_natural_fold.csv">t5_per_natural_fold.csv</a>
+    <a href="data/exp52_natlodo_pergroup.csv">exp52_natlodo_pergroup.csv (all 4536 cells)</a>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Citation -->
+<section id="citation">
+  <h2>Citation</h2>
+<pre class="bibtex">@inproceedings{leite2026synthetic,
+  title     = {Synthetic speech detection in {B}razilian {P}ortuguese through accent-related features},
+  author    = {Leite, Pedro H. L. and Valadares, Pedro Benevenuto and Biscainho, Luiz W. P.},
+  booktitle = {Proc. IEEE Spoken Language Technology Workshop (SLT)},
+  year      = {2026}
+}</pre>
+</section>
+
+<footer>
+  IEEE SLT 2026 &middot; This work was partially supported by CNPq (306395/2025-8).<br>
+  Natural speech comes from publicly available Brazilian Portuguese corpora, each under its own licence;
+  see the toolbox download helpers for provenance. No audio is redistributed from this page.<br>
+  Anthropic AI models were used to help with text, tables, figures and experimental code, as stated in the
+  paper&rsquo;s acknowledgments.<br>
+  <strong>GPA</strong> | Grupo de Processamento de &Aacute;udio, SMT/UFRJ
+</footer>
+
+</div>
+</body>
+</html>

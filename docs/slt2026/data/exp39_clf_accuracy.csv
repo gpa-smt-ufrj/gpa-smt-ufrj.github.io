@@ -1,0 +1,7 @@
+marker,task,holdout,n_clips,n_speakers,n_classes,classes,accuracy,balanced_accuracy,macro_f1,majority_baseline
+S,/s/ coda (chiado vs sibilant),leave-one-dataset-out,9256,84,2,chiado/sibilant,0.7809,0.6447,0.659,0.7625
+S,/s/ coda (chiado vs sibilant),leave-one-speaker-out,9256,84,2,chiado/sibilant,0.8333,0.7181,0.7412,0.7625
+R,/r/ coda (carioca vs tap vs caipira),leave-one-dataset-out,3117,71,3,caipira/carioca/tap,0.6346,0.5052,0.4582,0.4921
+R,/r/ coda (carioca vs tap vs caipira),leave-one-speaker-out,3117,71,3,caipira/carioca/tap,0.6862,0.6376,0.6417,0.4921
+DT,"/d,t/ (palatalized vs not)",leave-one-dataset-out,3471,68,2,non-palatalized/palatalized,0.813,0.5888,0.6018,0.8297
+DT,"/d,t/ (palatalized vs not)",leave-one-speaker-out,3471,68,2,non-palatalized/palatalized,0.8438,0.6201,0.6453,0.8297

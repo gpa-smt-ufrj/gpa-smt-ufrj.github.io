@@ -1,0 +1,157 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1a1a2e;
+  background: #fff;
+  padding: 0 1rem 4rem;
+}
+
+a { color: #C0392B; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container { max-width: 900px; margin: 0 auto; }
+
+/* ── Header ── */
+header { border-bottom: 2px solid #C0392B; padding: 2rem 0 1.2rem; }
+header h1 { font-size: 1.55rem; font-weight: 700; line-height: 1.3; margin-bottom: .5rem; }
+.authors { font-size: .9rem; color: #444; margin-bottom: .8rem; }
+.subtitle { font-size: .85rem; color: #666; margin-bottom: 1rem; }
+.btn-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.btn {
+  display: inline-block;
+  padding: .35rem .9rem;
+  border: 1.5px solid #C0392B;
+  border-radius: 4px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #C0392B;
+  background: #fff;
+  cursor: pointer;
+}
+.btn:hover { background: #C0392B; color: #fff; text-decoration: none; }
+
+/* ── Sections ── */
+section { margin-top: 2.5rem; }
+h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;
+     padding-bottom: .3rem; border-bottom: 1px solid #ddd; }
+h3 { font-size: 1rem; font-weight: 700; margin: 1.4rem 0 .6rem; }
+
+/* ── Overview ── */
+.overview { background: #fdf5f5; border-left: 4px solid #C0392B; padding: 1rem 1.2rem; border-radius: 0 4px 4px 0; }
+
+/* ── Research questions ── */
+.rq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 640px) { .rq-grid { grid-template-columns: 1fr; } }
+.rq-card { border: 1px solid #e8d0d0; border-radius: 6px; padding: 1rem; }
+.rq-card strong { display: block; margin-bottom: .4rem; color: #C0392B; font-size: .9rem; }
+.rq-card p { font-size: .88rem; color: #333; }
+.rq-card .highlight { font-weight: 700; color: #C0392B; }
+
+/* ── Taxonomy table ── */
+.taxonomy-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.taxonomy-table th { background: #fdf0f0; text-align: left; padding: .45rem .7rem;
+                      border: 1px solid #e0cccc; font-weight: 600; }
+.taxonomy-table td { padding: .4rem .7rem; border: 1px solid #ddd; }
+.taxonomy-table tr:nth-child(even) td { background: #fdf8f8; }
+.ipa { font-family: "Noto Serif", Georgia, serif; font-size: .95em; }
+
+/* ── Audio players ── */
+.marker-section { margin-top: 1.8rem; }
+.marker-section h3 { color: #1a1a2e; }
+.listening-hint { font-size: .83rem; color: #555; margin-bottom: .9rem;
+                  background: #f5f5f5; padding: .5rem .8rem; border-radius: 4px; }
+.class-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.class-col h4 { font-size: .9rem; font-weight: 700; margin-bottom: .6rem; color: #C0392B; }
+.clip { border: 1px solid #ddd; border-radius: 6px; overflow: hidden; margin-bottom: .7rem; background: #fff; }
+.clip img { width: 100%; display: block; }
+.clip-meta { padding: .4rem .6rem; display: flex; flex-direction: column; gap: .3rem; }
+.clip-meta audio { width: 100%; height: 32px; }
+.clip-meta span { font-size: .78rem; color: #555; }
+
+/* ── Ablation table ── */
+.table-scroll { overflow-x: auto; margin-top: .8rem; }
+.ablation { border-collapse: collapse; font-size: .8rem; min-width: 500px; width: 100%; }
+.ablation th, .ablation td { padding: .28rem .55rem; border: 1px solid #ccc; white-space: nowrap; }
+.ablation thead th { background: #fdf0f0; font-weight: 700; text-align: center; }
+.ablation thead th:first-child { text-align: left; }
+.ablation td:first-child { text-align: left; }
+.ablation td { text-align: center; }
+.ablation td.combo { padding-left: 1.4rem; color: #333; }
+.ablation tr.group-hdr th {
+  background: #1a1a2e; color: #fff; font-size: .78rem;
+  text-transform: uppercase; letter-spacing: .04em; text-align: left;
+  padding: .3rem .55rem;
+}
+.std { font-size: .72em; opacity: .85; }
+.legend { display: flex; align-items: center; gap: .7rem; margin-top: .6rem; font-size: .78rem; color: #555; }
+.legend-bar {
+  width: 140px; height: 12px; border-radius: 2px;
+  background: linear-gradient(to right, #A50026, #F46D43, #FEFEBD, #A4D869, #006837);
+  border: 1px solid #ccc;
+}
+.ablation-caption { font-size: .8rem; color: #555; margin-top: .5rem; }
+
+/* ── Citation ── */
+pre.bibtex {
+  background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px;
+  padding: 1rem; font-size: .8rem; overflow-x: auto; white-space: pre;
+}
+
+/* ── Footer ── */
+footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid #ddd;
+         font-size: .8rem; color: #666; line-height: 1.8; }
+
+/* ══════════════ Paper B additions ══════════════ */
+
+/* generic data tables (setup, effect sizes, per-group EER) */
+.data-table { width: 100%; border-collapse: collapse; font-size: .82rem; min-width: 460px; }
+.data-table thead th { background: #fdf0f0; font-weight: 700; text-align: center;
+                       padding: .32rem .55rem; border: 1px solid #e0cccc; white-space: nowrap; }
+.data-table thead th:first-child { text-align: left; }
+.data-table td { padding: .28rem .55rem; border: 1px solid #ddd; text-align: center; white-space: nowrap; }
+.data-table td:first-child { text-align: left; white-space: normal; }
+.data-table tr.group-hdr th { background: #1a1a2e; color: #fff; font-size: .78rem;
+                              text-transform: uppercase; letter-spacing: .04em;
+                              text-align: left; padding: .3rem .55rem; }
+.data-table tr.sub td { background: #fafafa; }
+.caption { font-size: .78rem; color: #555; margin-top: .5rem; line-height: 1.55; }
+
+/* figure grids (feature distributions, vowel spaces, heatmaps) */
+.fig-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: .9rem; margin-top: .9rem; }
+.fig-grid figure { border: 1px solid #ddd; border-radius: 6px; overflow: hidden; background: #fff; }
+.fig-grid img { width: 100%; display: block; }
+.fig-grid figcaption { padding: .35rem .6rem; font-size: .76rem; color: #555; border-top: 1px solid #eee; }
+.fig-wide { max-width: 560px; margin: .9rem auto 0; }
+.fig-wide img { width: 100%; display: block; border: 1px solid #ddd; border-radius: 6px; }
+
+/* collapsible blocks (sentence list 51-100, long tables) */
+details { margin-top: .8rem; border: 1px solid #e8d0d0; border-radius: 6px; padding: .5rem .8rem; }
+details summary { cursor: pointer; font-size: .85rem; font-weight: 600; color: #C0392B; }
+details[open] summary { margin-bottom: .6rem; }
+
+/* inline notes / caveats */
+.note { background: #f7f7f9; border-left: 3px solid #999; padding: .6rem .9rem;
+        border-radius: 0 4px 4px 0; font-size: .83rem; color: #444; margin-top: .9rem; }
+.note strong { color: #1a1a2e; }
+
+/* sentence list */
+.sentences { font-size: .82rem; line-height: 1.75; columns: 2; column-gap: 1.6rem; }
+.sentences li { break-inside: avoid; margin-left: 1.1rem; }
+@media (max-width: 640px) { .sentences { columns: 1; } }
+
+/* file links (recipes, csv downloads) */
+.filelist { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .7rem; }
+.filelist a { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+              font-size: .76rem; border: 1px solid #ddd; border-radius: 4px;
+              padding: .22rem .5rem; background: #fafafa; color: #1a1a2e; }
+.filelist a:hover { border-color: #C0392B; color: #C0392B; text-decoration: none; }
+
+/* disabled placeholder button */
+.btn.btn-off { border-color: #bbb; color: #999; cursor: default; }
+.btn.btn-off:hover { background: #fff; color: #999; }
+.data-table .dim { font-size: .72rem; color: #888; }
+.data-table td.ids { font-size: .72rem; line-height: 1.45; max-width: 230px; }

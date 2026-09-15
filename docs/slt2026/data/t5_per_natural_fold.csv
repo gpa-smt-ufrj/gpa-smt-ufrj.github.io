@@ -1,0 +1,8 @@
+nat_fold,label,n_speakers,ECAPA+Formants all,ECAPA+Formants curated,ECAPA+Formants MLAAD,ZIPA+PX+Formants all,ZIPA+PX+Formants curated,ZIPA+PX+Formants MLAAD
+resp_spotify,TAGARELA / Spotify (RE + SP),189,3.61,8.33,1.26,5.84,13.3,2.1
+ann_hash128,annotated — hashed IDs,43,9.75,17.63,5.81,17.48,9.97,21.24
+ann_named_fm,annotated — NAME_F/M IDs,22,11.51,17.1,8.72,11.11,13.43,9.94
+ann_youtube11,annotated — YouTube-style IDs,15,14.82,16.94,13.75,5.14,3.75,5.83
+ann_numeric,annotated — numeric IDs,6,15.05,26.39,9.38,11.99,14.17,10.9
+ann_lcname,annotated — lowercase-name IDs,4,3.54,4.38,3.12,1.04,0.0,1.56
+ann_other,annotated — other,2,14.58,18.75,12.5,16.17,14.38,17.07
