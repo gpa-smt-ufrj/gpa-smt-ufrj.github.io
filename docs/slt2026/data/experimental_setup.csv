@@ -1,0 +1,30 @@
+group,setting,value
+Natural speech pool,"Speakers (Tables I-II, Fig. 1-3)",364 = 210 TAGARELA/Spotify + 92 annotated + 62 BRSpeech-DF bonafide
+Natural speech pool,"Speakers (Table V, double LODO)",281 = 189 TAGARELA/Spotify + 92 annotated (BRSpeech-DF excluded)
+Natural speech pool,Source corpora,"CORAA (CORAL, NURC-RE, TED), Mozilla Common Voice, CoLingPB, CML-TTS, NURC-SP, Certas Palavras, CETUC/ALCaim, TAGARELA (Spotify podcasts)"
+Natural speech pool,Selection criterion,"multiple dialects and multiple recording chains, filtered for sample quality; no sociolinguistic labels used for selection"
+Natural speech pool,Utterance budget,up to 40 utterances per speaker for natural sources; 50 for the utterance-budget sweep of Fig. 2 (1-100)
+Synthetic speech pool,Voices,57 TTS voices x 50 sentences (39 commercial + 18 open-source)
+Synthetic speech pool,Text set,the same 50 phonetically balanced sentences for every voice (sentences_50.txt)
+Synthetic speech pool,Longer-text set,"sentences_51_100.txt, synthesized for the switching experiment, which needs >= 2 marker detections per utterance"
+Synthetic speech pool,Output format,16 kHz mono PCM WAV; providers returning another rate are resampled with torchaudio
+Synthetic speech pool,Note,"three further voice directories exist on disk (azure_henrique, openai_verse, qwen3_bella) and are used only by the switching experiment, not by the 57-voice detection pool"
+Cross-dataset benchmarks,BRSpeech-DF,official train/validation/test splits (Table III)
+Cross-dataset benchmarks,FakeBRAccent,"no official split; speaker-disjoint 5-fold CV over 10 seeds, since the same speaker appears in both bonafide and spoof parts (Table IV)"
+Cross-dataset benchmarks,MLAAD (pt subset),"16 TTS systems; synthetic only, so training always draws natural speech from the other sources (Table V)"
+Audio front-end,Sample rate,16 kHz mono throughout
+Audio front-end,Marker localization,"ZIPA phone recognizer in forced-alignment mode (ONNX CTC, 20 ms frames)"
+Audio front-end,Marker window,"+/- 80 ms around the detected marker frame; /d,t/ uses a broad window for spectral moments and a narrow +/- 2-frame window for ZIPA probabilities"
+Audio front-end,PhoneticXeus,group-pooled phone logits at the same marker frames (+/- 2 frames)
+Audio front-end,Vowel formants,"parselmouth Burg, 5 formants, 5000 Hz ceiling, 25 ms window, 50 Hz pre-emphasis, queried at ZIPA vowel spikes"
+Audio front-end,Channel normalization (Table V only),"librosa silence trim at top_db=30, RMS normalization to 0.05 with 0.99 peak safety, and cepstral mean normalization of the MFCC block"
+Feature blocks,ZIPA (46D),6 spectral moments + windowed CTC phone posteriors for each of the three markers
+Feature blocks,Formants (29D),"per-vowel mean F1/F2/F3 for a, E, e, i, O, o, u (21D) + long-term formant mean/SD (6D) + long-term F0 mean/SD (2D)"
+Feature blocks,PhoneticXeus,group-pooled phone logits at marker positions
+Feature blocks,Aggregation,per-speaker mean over that speaker's clips; missing vowels imputed with the natural-pool column mean
+Models and cross-validation,KDE (Table I),"Gaussian kernel, bandwidth 2x Scott, OOD threshold at the 5th percentile of the training log-likelihood, 5-fold, seed 42"
+Models and cross-validation,Dimensionality reduction,t-SNE perplexity 40 / 1000 iterations / PCA init (transductive); Isomap 15 neighbours; PCA 5 components; seed 42
+Models and cross-validation,Supervised detection (Table II),"XGBoost 400 trees, depth 4, lr 0.05, subsample and colsample 0.8; balanced 5-fold CV over 20 seeds; StandardScaler"
+Models and cross-validation,Cross-dataset (Table V),"XGBoost 400 trees, depth 5, lr 0.05, subsample and colsample 0.8, scale_pos_weight, seed 0"
+Models and cross-validation,Realization classifiers (Fig. 4),"XGBoost 300 trees, depth 4, lr 0.05, subsample and colsample 0.9, L2 1.0, seed 0, on [spec6 | ZIPA | PhoneticXeus logits]"
+Models and cross-validation,Metric,EER computed by sweeping the score threshold; accuracy at the EER operating point
