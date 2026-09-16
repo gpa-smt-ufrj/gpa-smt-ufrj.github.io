@@ -24,6 +24,7 @@
     <a class="btn" href="https://arxiv.org/abs/2605.30457" target="_blank" rel="noopener">arXiv</a>
     <a class="btn" href="https://arxiv.org/pdf/2605.30457" target="_blank" rel="noopener">PDF</a>
     <a class="btn" href="#citation">BibTeX</a>
+    <a class="btn" href="https://github.com/pedrohlopes/pt-br-accent-toolbox" target="_blank" rel="noopener">Code &amp; data</a>
   </div>
 </header>
 
@@ -382,6 +383,54 @@
   </div>
   <p class="ablation-caption">
     Best speaker accuracy per feature set (best classifier selected per cell). Values show mean&thinsp;&plusmn;&thinsp;std across balanced stratified cross-validation folds (&sim;5 test speakers/fold). Heatmap colors match the paper.
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════════ Reproducibility -->
+<section id="reproducibility">
+  <h2>Reproducing This Work</h2>
+  <div class="overview">
+    <p>The feature extraction, marker alignment and classification code is packaged as
+    <a href="https://github.com/pedrohlopes/pt-br-accent-toolbox" target="_blank" rel="noopener"><strong>pt-br-accent-toolbox</strong></a>,
+    together with download scripts for every corpus used here and the speaker
+    annotations that define the labelled cohort.</p>
+  </div>
+
+  <h3>Corpora</h3>
+  <p>Every corpus used in this paper has a bundled download script &mdash; CETUC/Alcaim,
+  CORAA (including its C-ORAL Brasil and TED subsets), Common Voice, CoLingPB, CML-TTS,
+  Certas Palavras, GneutralSpeech, BRSpeech-DF, TAGARELA and Sotaque Brasileiro &mdash;
+  with the sole exception of the Ynoguti corpus, which is distributed only by its authors.
+  Each script fetches the corpus and organizes it into the per-speaker layout the pipeline
+  expects:</p>
+<pre class="bibtex">git clone https://github.com/pedrohlopes/pt-br-accent-toolbox
+cd pt-br-accent-toolbox &amp;&amp; pip install -e ".[datasets]"
+
+python tools/download_datasets.py list          # every corpus, with its source and caveats
+python tools/download_alcaim.py --sentences balanced50
+python tools/download_coraa.py --split train --subsets nurc,coral,ted
+python tools/download_common_voice.py</pre>
+  <p class="ablation-caption">
+    Alcaim / CETUC is streamed and filtered on the fly rather than downloaded whole, and
+    <code>--sentences balanced50</code> reproduces the phonetically balanced 50-sentence
+    subset used throughout the paper. Corpora that are only available on request from
+    their authors are listed with contact pointers instead of a script.
+  </p>
+
+  <h3>Speaker annotations</h3>
+  <p>The 115 hand-labelled speakers — nine corpora, three markers
+  (<em>/s/ coda</em>, <em>/r/ coda</em>, <em>/d/&ndash;/t/ palatalization</em>) — ship with
+  the package as CSVs under
+  <code><a href="https://github.com/pedrohlopes/pt-br-accent-toolbox/tree/main/pt_br_accent_toolbox/data/annotations" target="_blank" rel="noopener">pt_br_accent_toolbox/data/annotations/</a></code>:
+  the raw per-annotator rows, the per-speaker majority label with agreement counts, and a
+  summary table. Speaker IDs are the directory names the download scripts produce, so the
+  labels join directly against a local copy of each corpus.</p>
+  <p class="ablation-caption">
+    Read that folder's README before using the labels. In particular: 22 of the Alcaim
+    speakers carry only an <em>/s/</em>-coda label and were selected <em>because</em> of how
+    they realize it, so that marker is not a random sample of the corpus; and only three
+    speakers were labelled by two annotators, which is too few to report as an
+    inter-annotator agreement figure.
   </p>
 </section>
 
