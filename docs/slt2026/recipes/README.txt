@@ -51,7 +51,7 @@ within-utterance switching experiment. It sources an .env file for the API keys.
 
 3. Prompt selection
 -------------------
-select_subset.py is the greedy selection that produced sentences_50.txt from the ALCaim
+select_subset.py is the greedy selection that produced sentences_50.txt from the Alcaim
 1000-sentence list, minimizing the L1 distance between the subset's phone-unit distribution
 and the distribution of the full list.
 
