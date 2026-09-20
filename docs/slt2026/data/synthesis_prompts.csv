@@ -1,51 +1,111 @@
-id,set,text
-1,detection set (all 57 voices),"No total, sete mísseis foram disparados contra o encrave."
-2,detection set (all 57 voices),"Até agora, na televisão, eles já somam quatro ministros."
-3,detection set (all 57 voices),Os dois times perderam uma chance atrás da outra.
-4,detection set (all 57 voices),Os médicos ainda não sabem quanto tempo ele deverá ficar no hospital.
-5,detection set (all 57 voices),"Tenho muita vontade de aprender, mas baixo poder aquisitivo."
-6,detection set (all 57 voices),"Apesar disso, continua ligado ao seu país de origem."
-7,detection set (all 57 voices),Evite correr ao banco para trocar o seu dinheiro.
-8,detection set (all 57 voices),"Em grande fase, é a nova sensação do time."
-9,detection set (all 57 voices),Respondeu que a sua frase havia sido tirada do contexto.
-10,detection set (all 57 voices),Na Universidade de Paris Três é só isso que se faz.
-11,detection set (all 57 voices),A Coréia exporta um bilhão de dólares em móveis por ano.
-12,detection set (all 57 voices),"A polícia apreendeu nos últimos vinte dias, sessenta carros a seu serviço."
-13,detection set (all 57 voices),"Segundo ele, foi apenas um almoço rápido entre amigos."
-14,detection set (all 57 voices),É muito raro que algum documentário esteja na lista deles.
-15,detection set (all 57 voices),O novo presidente seria conhecido quatro dias após a votação.
-16,detection set (all 57 voices),"Segundo Almeida, é praticamente impossível controlar o fogo sem ajuda exterior."
-17,detection set (all 57 voices),A justiça brasileira considerou o fato apenas um crime comum.
-18,detection set (all 57 voices),A decisão está para ser tomada em fevereiro ou março.
-19,detection set (all 57 voices),A melhoria da qualidade não interessa só a técnicos ou empresários.
-20,detection set (all 57 voices),No final era um monte de homens se abraçando e chorando.
-21,detection set (all 57 voices),A margem de erro é de três pontos percentuais.
-22,detection set (all 57 voices),Juliana disse que o banco a ser escolhido é surpresa.
-23,detection set (all 57 voices),O vencedor de cada grupo ganha um ponto extra.
-24,detection set (all 57 voices),Estava muito calor e não soubemos dosar a energia.
-25,detection set (all 57 voices),"Segundo ele, a cabine não faz parte do edifício."
-26,detection set (all 57 voices),Esse nosso sintetizador de voz vai ficar uma beleza.
-27,detection set (all 57 voices),Empresa que serve ao Ministério da Fazenda aluga comitê aos tucanos.
-28,detection set (all 57 voices),Os grandes bancos estão procurando apoiar as pequenas instituições.
-29,detection set (all 57 voices),Outro obstáculo às relações afetivas é a competitividade interna.
-30,detection set (all 57 voices),"Sem a retirada, os muçulmanos não compareceram às negociações."
-31,detection set (all 57 voices),"Ele, ainda meio confuso, volta para perto da Constituição."
-32,detection set (all 57 voices),Itamar pode faltar a Mercosul para ir à posse do presidente colombiano.
-33,detection set (all 57 voices),Tem lucro de um bilhão de dólares por ano.
-34,detection set (all 57 voices),"Os belgas reclamaram, mas o juiz não deu o pênalti."
-35,detection set (all 57 voices),O Brasil está perdendo pouco a pouco a sua identidade.
-36,detection set (all 57 voices),É mais importante saber o que fazem os jogadores no campo.
-37,detection set (all 57 voices),Comprei um jogo de canetas e fui visitá-lo em sua casa.
-38,detection set (all 57 voices),Meu tipo inesquecível é o advogado Francisco Rangel Pestana.
-39,detection set (all 57 voices),"Empregado do Parlamento Europeu, ele tinha ligações com a bancada socialista."
-40,detection set (all 57 voices),As entradas podem ser adquiridas pelo telefone acima.
-41,detection set (all 57 voices),Aliados do tucano prevêem que essas lideranças ficarão neutras.
-42,detection set (all 57 voices),Perdemos uma ótima oportunidade de fazer a revisão constitucional.
-43,detection set (all 57 voices),Trabalhamos exclusivamente com tipos que fogem do padrão tradicional de beleza.
-44,detection set (all 57 voices),"Não há, assim, motivo de temor para o Brasil."
-45,detection set (all 57 voices),"No dia de seu aniversário, Rose não saiu de casa."
-46,detection set (all 57 voices),Somente na última rodada serão definidas as colocações das equipes.
-47,detection set (all 57 voices),Em abril a taxa foi de dois vírgula seis por cento.
-48,detection set (all 57 voices),Sem falar nos que ainda não acertaram o fornecimento dos motores.
-49,detection set (all 57 voices),Ser progressista hoje é ligar o pensamento liberal com a social democracia.
-50,detection set (all 57 voices),"São tantas, que você aprende a conviver com elas."
+id,chars,text
+1,57,"No total, sete mísseis foram disparados contra o encrave."
+2,56,"Até agora, na televisão, eles já somam quatro ministros."
+3,49,Os dois times perderam uma chance atrás da outra.
+4,69,Os médicos ainda não sabem quanto tempo ele deverá ficar no hospital.
+5,60,"Tenho muita vontade de aprender, mas baixo poder aquisitivo."
+6,52,"Apesar disso, continua ligado ao seu país de origem."
+7,49,Evite correr ao banco para trocar o seu dinheiro.
+8,42,"Em grande fase, é a nova sensação do time."
+9,56,Respondeu que a sua frase havia sido tirada do contexto.
+10,51,Na Universidade de Paris Três é só isso que se faz.
+11,56,A Coréia exporta um bilhão de dólares em móveis por ano.
+12,74,"A polícia apreendeu nos últimos vinte dias, sessenta carros a seu serviço."
+13,54,"Segundo ele, foi apenas um almoço rápido entre amigos."
+14,58,É muito raro que algum documentário esteja na lista deles.
+15,61,O novo presidente seria conhecido quatro dias após a votação.
+16,79,"Segundo Almeida, é praticamente impossível controlar o fogo sem ajuda exterior."
+17,61,A justiça brasileira considerou o fato apenas um crime comum.
+18,53,A decisão está para ser tomada em fevereiro ou março.
+19,67,A melhoria da qualidade não interessa só a técnicos ou empresários.
+20,56,No final era um monte de homens se abraçando e chorando.
+21,46,A margem de erro é de três pontos percentuais.
+22,53,Juliana disse que o banco a ser escolhido é surpresa.
+23,46,O vencedor de cada grupo ganha um ponto extra.
+24,50,Estava muito calor e não soubemos dosar a energia.
+25,48,"Segundo ele, a cabine não faz parte do edifício."
+26,52,Esse nosso sintetizador de voz vai ficar uma beleza.
+27,68,Empresa que serve ao Ministério da Fazenda aluga comitê aos tucanos.
+28,67,Os grandes bancos estão procurando apoiar as pequenas instituições.
+29,65,Outro obstáculo às relações afetivas é a competitividade interna.
+30,62,"Sem a retirada, os muçulmanos não compareceram às negociações."
+31,58,"Ele, ainda meio confuso, volta para perto da Constituição."
+32,71,Itamar pode faltar a Mercosul para ir à posse do presidente colombiano.
+33,42,Tem lucro de um bilhão de dólares por ano.
+34,51,"Os belgas reclamaram, mas o juiz não deu o pênalti."
+35,54,O Brasil está perdendo pouco a pouco a sua identidade.
+36,58,É mais importante saber o que fazem os jogadores no campo.
+37,55,Comprei um jogo de canetas e fui visitá-lo em sua casa.
+38,60,Meu tipo inesquecível é o advogado Francisco Rangel Pestana.
+39,77,"Empregado do Parlamento Europeu, ele tinha ligações com a bancada socialista."
+40,53,As entradas podem ser adquiridas pelo telefone acima.
+41,63,Aliados do tucano prevêem que essas lideranças ficarão neutras.
+42,66,Perdemos uma ótima oportunidade de fazer a revisão constitucional.
+43,79,Trabalhamos exclusivamente com tipos que fogem do padrão tradicional de beleza.
+44,45,"Não há, assim, motivo de temor para o Brasil."
+45,49,"No dia de seu aniversário, Rose não saiu de casa."
+46,67,Somente na última rodada serão definidas as colocações das equipes.
+47,51,Em abril a taxa foi de dois vírgula seis por cento.
+48,65,Sem falar nos que ainda não acertaram o fornecimento dos motores.
+49,75,Ser progressista hoje é ligar o pensamento liberal com a social democracia.
+50,49,"São tantas, que você aprende a conviver com elas."
+51,52,"O truque, segundo ele, é aproveitar bem a madrugada."
+52,64,Havia possibilidade de uma nova reunião ser convocada para hoje.
+53,72,Os sobreviventes cremaram seus mortos e procuram reconstruir suas vidas.
+54,62,As importações de maçã argentina não preocupam os plantadores.
+55,52,"Daqui a pouco, a violência vai ser a única diversão."
+56,47,"Agora, ele despenca do teto em direção ao piso."
+57,54,"A televisão virou um açougue, uma máquina de produzir."
+58,69,O governo poderá adotar ações penais por crime de omissão de socorro.
+59,56,Nunca havia ido para um treino com seguranças no ônibus.
+60,70,Eles experimentaram vários tipos de comidas exóticas durante a viagem.
+61,71,Apenas dez por cento dos funcionários em todo Brasil trabalharam ontem.
+62,59,Basta que sua remuneração não seja menor que setenta reais.
+63,90,Isso traria efeitos sobre os financiamentos habitacionais feitos com recursos da poupança.
+64,55,Esta diferença acabou se refletindo no índice de julho.
+65,61,Desconfio que não resistirão à nossa aplicada tática de jogo.
+66,54,O Brasil tem pressa e o governo está pronto para agir.
+67,53,"Todos os dias, das dezessete horas ao último cliente."
+68,52,Quero estar no grupo e ajudar sempre que necessário.
+69,54,Venda de veículos no varejo bate novo recorde em maio.
+70,72,Eu vi apenas dois videoteipes dos amistosos contra Argentina e Alemanha.
+71,58,Os investidores foram para a Argentina e para a Venezuela.
+72,52,"Para ele, a concorrência é boa para os consumidores."
+73,52,As pessoas se divertiram tanto que aplaudiram de pé.
+74,60,A perspectiva continua otimista para o médio e longo prazos.
+75,72,"Existem péssimas edições do livro, por isso, use o da Edição Pensamento."
+76,61,Ele defende a formulação de um programa mínimo para evitá-la.
+77,67,"Outros produtos também lembrados: feijão, café e derivados de soja."
+78,58,Eu queria fazer minhas próprias coisas e logo caí na real.
+79,69,Quatro homens entraram separadamente pela porta principal da agência.
+80,62,Eu acabo de receber uma crítica muito elogiosa aqui no Canadá.
+81,55,O seqüestro de bens serviria para garantir o pagamento.
+82,50,É uma política oportuna e bem conduzida até agora.
+83,63,"Vamos esquecer o passado, vamos pensar no presente e no futuro."
+84,63,"Depois que a Mangueira passar, o suspense dominará a passarela."
+85,77,No entender do advogado Celso Botelho de Moraes não há inconstitucionalidade.
+86,66,Primeiro arredondou a idade do percussionista para cinqüenta anos.
+87,49,O curso é gratuito e tem a duração de seis meses.
+88,62,O mais desculpável em Itamar são os seus vexames de passarela.
+89,57,O termo caça-níqueis se aplica exatamente aos dois jogos.
+90,60,Ela disse que o Alcorão deveria ser revisado cuidadosamente.
+91,52,O grupo chegou quando os amotinados já tinham saído.
+92,58,O ministério diz que não foi consultado sobre a transação.
+93,53,O número de convocados por vaga é de doze candidatos.
+94,62,Para discutir sobre ecologia e projetos para gerações futuras.
+95,59,Fiz o que a maioria procurou fazer: evitei provocar marola.
+96,50,Eu não quero e não vou falar sobre câmbio e juros.
+97,68,"O partido precisaria, de resto, abrir-se para composições políticas."
+98,48,A mãe de todas as reformas é a reforma política.
+99,61,"A permanecer a atual situação, será o Brasil que não vingará."
+100,62,Só para o curso de inglês é necessário conhecimento da língua.
+101,861,"Todas as manhãs, antes de sair para o trabalho, eu costumo tomar um café bem forte e ler as notícias mais importantes do dia. As ruas da cidade ficam cheias de carros, ônibus e pessoas apressadas que precisam chegar cedo aos seus compromissos. Os estudantes correm para as escolas, os trabalhadores esperam nos pontos de ônibus, e os vendedores já começam a montar suas barracas nas esquinas. Eu gosto de observar esse movimento constante enquanto caminho pelas calçadas, prestando atenção nos detalhes que muita gente nem percebe. Às vezes encontro velhos amigos pela rua e paramos para conversar sobre as novidades, sobre os planos para o futuro e sobre as dificuldades que enfrentamos todos os dias. Depois sigo o meu caminho, sempre com pressa, mas tentando aproveitar cada instante dessa rotina que, apesar de cansativa, também tem o seu charme particular."
+102,865,"Na semana passada, decidimos finalmente realizar aquela viagem que vínhamos adiando havia tanto tempo por causa do trabalho e das obrigações. Saímos de madrugada, com as malas cheias e o carro abastecido, prontos para enfrentar as longas estradas que cortam o interior do estado. Durante o percurso, passamos por pequenas cidades históricas, paramos para almoçar em restaurantes simples à beira da rodovia e conversamos sobre as lembranças da nossa infância. As paisagens mudavam constantemente: ora montanhas verdes e úmidas, ora planícies secas e douradas sob o sol forte da tarde. Quando chegamos ao nosso destino, já era quase noite, e as luzes da pousada nos receberam com um brilho acolhedor. Cansados mas felizes, jantamos devagar, brindamos à amizade verdadeira e dormimos profundamente, certos de que aqueles dias ficariam para sempre guardados na memória."
+103,847,"Cozinhar para os amigos sempre foi uma das minhas maiores paixões, especialmente nos finais de semana, quando o tempo permite preparar pratos mais elaborados e demorados. Costumo começar separando todos os ingredientes sobre a bancada: os temperos frescos, as carnes, os legumes coloridos e os queijos que comprei na feira pela manhã. Enquanto as panelas fervem no fogão, vou ajustando o sal, provando os molhos e corrigindo os sabores com paciência e atenção. O cheiro que se espalha pela casa atrai todos para a cozinha, e logo começam as conversas animadas sobre comida, viagens e receitas de família. Quando finalmente servimos o jantar, sinto uma satisfação enorme ao ver os pratos vazios e os sorrisos contentes dos convidados. Para mim, não existe presente maior do que reunir as pessoas queridas ao redor de uma mesa farta e bem preparada."
+104,870,"Trabalhar em uma grande empresa exige muita disciplina, organização e capacidade de lidar com pessoas de diferentes personalidades e interesses. Todas as manhãs, antes mesmo de abrir o computador, eu reviso minha lista de tarefas e estabeleço as prioridades do dia para não me perder no meio de tantas reuniões e solicitações. Os colegas costumam aparecer na minha sala com dúvidas urgentes, relatórios pendentes e projetos que precisam ser entregues dentro de prazos cada vez mais apertados. Apesar da pressão constante, procuro manter a calma, responder os e-mails com clareza e tratar todos com respeito e gentileza. No final da tarde, quando o escritório começa a esvaziar, aproveito o silêncio para revisar os documentos importantes e planejar as atividades do dia seguinte. Saio do prédio cansado, mas com a sensação de dever cumprido e de mais um desafio vencido."
+105,856,"O inverno na serra costuma ser rigoroso, com manhãs geladas, neblinas densas e ventos cortantes que descem das montanhas durante a madrugada. As pessoas que moram nessas regiões aprendem desde cedo a respeitar a força da natureza e a se preparar para os dias mais difíceis do ano. Logo após o amanhecer, os moradores acendem as lareiras, vestem casacos pesados e saem para cuidar dos animais e das plantações que resistem ao frio intenso. Os rios descem cristalinos entre as pedras, e as árvores perdem as folhas, deixando os galhos nus contra o céu acinzentado. Quando o sol finalmente aparece, ainda que tímido, todos param para apreciar a beleza tranquila daquela paisagem silenciosa. À noite, reunidos ao redor do fogo, contam histórias antigas e bebem chás quentes, esperando que a primavera chegue logo para aquecer novamente os corações e os campos."
+106,900,"Quando lembro dos meus tempos de escola, sinto uma mistura de saudade e gratidão por tudo o que vivi naqueles anos importantes da minha formação. As salas de aula eram simples, mas os professores dedicados conseguiam despertar em nós a curiosidade e o desejo constante de aprender coisas novas. Eu adorava as aulas de história e de literatura, nas quais discutíamos grandes acontecimentos e líamos textos que ampliavam os nossos horizontes. Nos intervalos, corríamos pelo pátio, dividíamos os lanches e inventávamos brincadeiras que nos faziam rir até perder o fôlego. Havia também os dias de prova, cheios de tensão e nervosismo, quando estudávamos até tarde tentando memorizar todas as matérias. Apesar das dificuldades, aqueles momentos construíram amizades verdadeiras e ensinamentos que carrego comigo até hoje, sempre que preciso enfrentar os desafios da vida adulta com coragem e determinação."
+107,944,"A tecnologia transformou completamente a maneira como vivemos, trabalhamos e nos relacionamos uns com os outros ao longo das últimas décadas. Hoje em dia, carregamos no bolso aparelhos poderosos que nos permitem acessar informações, conversar com pessoas distantes e resolver problemas complexos em questão de segundos. As empresas investem pesado em inteligência artificial, automação e sistemas digitais que prometem facilitar as tarefas mais repetitivas do cotidiano. No entanto, é preciso usar essas ferramentas com responsabilidade e equilíbrio, para não perder o contato verdadeiro com as pessoas e com o mundo real ao nosso redor. Muitos especialistas alertam sobre os perigos do excesso de telas, da dependência constante e da falta de privacidade nas redes sociais. Cabe a cada um de nós encontrar um caminho saudável, aproveitando os benefícios dos avanços modernos sem abrir mão da nossa humanidade e do tempo dedicado a quem amamos."
+108,920,"As festas populares brasileiras representam uma das manifestações culturais mais ricas e diversas de todo o nosso imenso território nacional. Durante o mês de junho, por exemplo, as cidades do interior se enchem de bandeirinhas coloridas, fogueiras acesas e barracas que vendem comidas típicas deliciosas. As pessoas se vestem com roupas caipiras, dançam quadrilha nas praças e celebram juntas as tradições herdadas dos seus antepassados. O som das sanfonas, dos triângulos e das zabumbas ecoa pelas ruas durante noites inteiras de muita alegria e descontração. Crianças correm de um lado para o outro segurando balões, enquanto os adultos conversam, riem e relembram as festas de outros tempos. Esses encontros fortalecem os laços comunitários e mantêm vivas as raízes culturais que definem a identidade do nosso povo, transmitindo de geração em geração os valores, os costumes e as histórias que nos tornam quem somos."
+109,963,"Cuidar da saúde do corpo e da mente tornou-se uma prioridade indispensável para quem deseja viver com qualidade e disposição. Os médicos recomendam praticar exercícios físicos regularmente, manter uma alimentação equilibrada e dormir as horas necessárias para que o organismo se recupere adequadamente. Caminhar ao ar livre pela manhã, por exemplo, ajuda a reduzir o estresse, fortalecer os músculos e melhorar o funcionamento do coração. Além disso, é fundamental beber bastante água, evitar os alimentos industrializados e reservar momentos de descanso ao longo do dia agitado. Muitas pessoas descobrem que pequenas mudanças nos hábitos diários produzem resultados surpreendentes na saúde física e emocional. Reservar um tempo para meditar, ler um bom livro ou simplesmente conversar com os amigos também contribui enormemente para o bem-estar geral. No fim das contas, a verdadeira riqueza está em manter o equilíbrio entre as obrigações e os prazeres da vida."
+110,922,"A família é, sem dúvida, o alicerce mais importante da nossa vida, o porto seguro para onde sempre retornamos nos momentos felizes e difíceis. Desde a infância, aprendemos com os nossos pais os valores fundamentais que nos acompanham por toda a existência: o respeito, a honestidade e a generosidade. Nos finais de semana, costumamos nos reunir na casa dos avós para almoçar, conversar e relembrar as histórias engraçadas que marcaram a nossa trajetória. As crianças brincam no quintal, os adultos trocam notícias e os mais velhos compartilham conselhos preciosos baseados na sabedoria de quem já viveu bastante. Mesmo quando surgem desentendimentos e discussões, o amor verdadeiro sempre fala mais alto e nos mantém unidos diante de qualquer adversidade. Por isso, devemos valorizar cada instante ao lado das pessoas que amamos, pois são essas lembranças que construímos juntos que dão sentido profundo à nossa caminhada."

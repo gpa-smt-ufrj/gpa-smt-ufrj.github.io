@@ -345,3 +345,7 @@ details.sub[open] > summary { margin-bottom: .5rem; }
 .dl-btn:hover { background: #C0392B; color: #fff; text-decoration: none; }
 .dl-meta { font-size: .78rem; color: #555; line-height: 1.5; flex: 1 1 260px; }
 .dl-meta strong { color: #1a1a2e; }
+
+/* the long texts are paragraphs, not one-liners — two columns would be unreadable */
+.sentences.long { columns: 1; font-size: .8rem; line-height: 1.65; }
+.sentences.long li { margin-bottom: .6rem; }
