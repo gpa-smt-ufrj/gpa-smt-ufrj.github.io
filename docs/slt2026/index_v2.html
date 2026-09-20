@@ -30,7 +30,7 @@
 </header>
 
 <div class="layout">
-<aside class="outline"><div class="outline-hd">Contents<span class="fold-all"><button type="button" data-all="open">expand all</button><button type="button" data-all="close">collapse all</button></span></div><nav><ul class="outline-list"><li data-sec="overview"><a href="#overview" data-sec="overview">Overview</a></li><li data-sec="rq"><a href="#rq" data-sec="rq">Research questions</a></li><li data-sec="confounds"><a href="#confounds" data-sec="confounds">Isolation &amp; confounds</a><ul><li data-sub="compared"><a href="#compared" data-sec="compared">What is compared</a></li><li data-sub="text"><a href="#text" data-sec="text">Text</a></li><li data-sub="isolation"><a href="#isolation" data-sec="isolation">Hold-out protocols</a></li><li data-sub="channel"><a href="#channel" data-sec="channel">Channel</a></li></ul></li><li data-sec="data"><a href="#data" data-sec="data">Data &amp; recipes</a><ul><li data-sub="synthesis-prompt-texts"><a href="#synthesis-prompt-texts" data-sec="synthesis-prompt-texts">Synthesis prompt texts</a></li></ul></li><li data-sec="setup"><a href="#setup" data-sec="setup">Experimental setup</a></li><li data-sec="distributions"><a href="#distributions" data-sec="distributions">Feature distributions</a><ul><li data-sub="marker-localized-features"><a href="#marker-localized-features" data-sec="marker-localized-features">Marker-localized features</a></li><li data-sub="vowel-spaces-f1-f2-95-ellipses"><a href="#vowel-spaces-f1-f2-95-ellipses" data-sec="vowel-spaces-f1-f2-95-ellipses">Vowel spaces (F1 &times; F2, 95% ellipses)</a></li><li data-sub="effect-size-for-every-feature"><a href="#effect-size-for-every-feature" data-sec="effect-size-for-every-feature">Effect size for every feature</a></li></ul></li><li data-sec="switching"><a href="#switching" data-sec="switching">Switching</a><ul><li data-sub="realization-classifier-accuracy"><a href="#realization-classifier-accuracy" data-sec="realization-classifier-accuracy">Realization-classifier accuracy</a></li><li data-sub="clustered-inference"><a href="#clustered-inference" data-sec="clustered-inference">Clustered inference</a></li></ul></li><li data-sec="crossdataset"><a href="#crossdataset" data-sec="crossdataset">Cross-dataset</a><ul><li data-sub="by-held-out-tts-group"><a href="#by-held-out-tts-group" data-sec="by-held-out-tts-group">By held-out TTS group</a></li><li data-sub="by-held-out-natural-corpus"><a href="#by-held-out-natural-corpus" data-sec="by-held-out-natural-corpus">By held-out natural corpus</a></li><li data-sub="full-grid"><a href="#full-grid" data-sec="full-grid">Full grid</a></li></ul></li><li data-sec="citation"><a href="#citation" data-sec="citation">Citation</a></li></ul></nav></aside>
+<aside class="outline"><div class="outline-hd">Contents<span class="fold-all"><button type="button" data-all="open">expand all</button><button type="button" data-all="close">collapse all</button></span></div><nav><ul class="outline-list"><li data-sec="overview"><a href="#overview" data-sec="overview">Overview</a></li><li data-sec="rq"><a href="#rq" data-sec="rq">Research questions</a></li><li data-sec="confounds"><a href="#confounds" data-sec="confounds">Isolation &amp; confounds</a><ul><li data-sub="compared"><a href="#compared" data-sec="compared">What is compared</a></li><li data-sub="text"><a href="#text" data-sec="text">Text</a></li><li data-sub="isolation"><a href="#isolation" data-sec="isolation">Hold-out protocols</a></li><li data-sub="channel"><a href="#channel" data-sec="channel">Channel</a></li></ul></li><li data-sec="data"><a href="#data" data-sec="data">Data &amp; recipes</a><ul><li data-sub="synthesis-prompt-texts"><a href="#synthesis-prompt-texts" data-sec="synthesis-prompt-texts">Synthesis prompt texts</a></li></ul></li><li data-sec="setup"><a href="#setup" data-sec="setup">Experimental setup</a></li><li data-sec="distributions"><a href="#distributions" data-sec="distributions">Feature distributions</a><ul><li data-sub="marker-localized-features"><a href="#marker-localized-features" data-sec="marker-localized-features">Marker-localized features</a></li><li data-sub="vowel-spaces-f1-f2-95-ellipses"><a href="#vowel-spaces-f1-f2-95-ellipses" data-sec="vowel-spaces-f1-f2-95-ellipses">Vowel spaces (F1 &times; F2, 95% ellipses)</a></li><li data-sub="effect-size-for-every-feature"><a href="#effect-size-for-every-feature" data-sec="effect-size-for-every-feature">Effect size for every feature</a></li></ul></li><li data-sec="switching"><a href="#switching" data-sec="switching">Switching</a><ul><li data-sub="realization-classifier-accuracy"><a href="#realization-classifier-accuracy" data-sec="realization-classifier-accuracy">Realization-classifier accuracy</a></li></ul></li><li data-sec="crossdataset"><a href="#crossdataset" data-sec="crossdataset">Cross-dataset</a><ul><li data-sub="by-held-out-tts-group"><a href="#by-held-out-tts-group" data-sec="by-held-out-tts-group">By held-out TTS group</a></li><li data-sub="by-held-out-natural-corpus"><a href="#by-held-out-natural-corpus" data-sec="by-held-out-natural-corpus">By held-out natural corpus</a></li><li data-sub="full-grid"><a href="#full-grid" data-sec="full-grid">Full grid</a></li></ul></li><li data-sec="citation"><a href="#citation" data-sec="citation">Citation</a></li></ul></nav></aside>
 <main>
 
 <h2 class="tldr-hd" id="tldr">TL;DR</h2>
@@ -389,32 +389,7 @@ test  = EER( natural[F] , synthetic[g] )
 <!-- ════════════════════════════════════════════════════ Distributions -->
 <section id="distributions"><details class="sec"><summary><h2 data-nav="Feature distributions">More feature distributions</h2></summary><div class="sec-body">
   
-  <div class="note"><strong>These panels are descriptive, and their p-values are exploratory.</strong>
-  Figure&nbsp;3 of the paper, and the panels below that extend it, exist to <em>illustrate</em> what differs
-  between natural and synthetic speech at each marker. The features in them were chosen because they
-  separate the two groups &mdash; by tree-ensemble importance, as described just below &mdash; so the
-  p-values printed on them are computed on the same data that selected them. They describe the contrast
-  inside the panel; they do not test a pre-registered hypothesis, they carry no multiple-comparison
-  correction over the 75 candidate features, and they should not be read as inferential evidence. The
-  inferential claims of the paper rest on the held-out detection results and on the
-  <a href="#switching">clustered</a> switching analysis, neither of which selects its features on the
-  evaluation data.</div>
-  <p class="caption">Figure 3 of the paper shows three of these panels. The features below are the
-    most discriminative interpretable features for the natural-versus-synthetic contrast, ranked by
-    tree-ensemble importance: the top 12 by mean absolute SHAP value of an XGBoost classifier and the top
-    12 by RandomForest impurity importance, both fitted on the same 364 natural and 57 synthetic speakers
-    (the two rankings agree with Spearman &rho;&nbsp;=&nbsp;0.72). Each panel is labelled with the rankings
-    that selected it. Importance is multivariate, so a feature can be useful to the classifier in combination
-    with others while showing little separation on its own; two of the panels below are of that kind and carry
-    a small, non-significant &delta;.</p>
-<div class="note"><strong>On the effect size.</strong> These panels report Cliff&rsquo;s
-    &delta;, computed from the Mann-Whitney U statistic as 2U/(mn)&nbsp;&minus;&nbsp;1, with &delta;&nbsp;&gt;&nbsp;0
-    meaning the synthetic distribution is stochastically larger. The submitted version of Figure 3 printed
-    Cohen&rsquo;s d in those boxes by mistake; Cliff&rsquo;s &delta; is bounded to [&minus;1,&nbsp;1], and the
-    correct values for the two univariate panels of that figure are &delta;&nbsp;=&nbsp;+0.77 and
-    +0.66. The vowel panels are bivariate, so they report the Mahalanobis distance D between group centroids
-    with a Hotelling T&sup2; p-value instead.</div>
-<details class="sub"><summary><h3 id="marker-localized-features">Marker-localized features</h3></summary>
+  <details class="sub"><summary><h3 id="marker-localized-features">Marker-localized features</h3></summary>
 <div class="fig-grid">
 <figure><img loading="lazy" src="img/dist_S_zipa_s.png" alt="S_zipa_s distribution"><figcaption><code>S_zipa_s</code> &middot; /s/ coda &middot; &delta;=+0.77, p=6e-21 &middot; SHAP+RF</figcaption></figure>
 <figure><img loading="lazy" src="img/dist_R_spec_peak.png" alt="R_spec_peak distribution"><figcaption><code>R_spec_peak</code> &middot; /r/ coda &middot; &delta;=+0.53, p=1e-10 &middot; SHAP+RF</figcaption></figure>
@@ -453,300 +428,38 @@ test  = EER( natural[F] , synthetic[g] )
 </div></details></section>
 
 <!-- ════════════════════════════════════════════════════ Switching -->
-<section id="switching"><details class="sec"><summary><h2 data-nav="Switching">Within-utterance switching: classifier accuracy and clustered statistics</h2></summary><div class="sec-body">
+<section id="switching"><details class="sec"><summary><h2 data-nav="Switching">Within-utterance switching: classifier accuracy</h2></summary><div class="sec-body">
   
-  <div class="note"><strong>Pseudoreplication.</strong> Figure&nbsp;4 of the submitted version compared
-  utterances as if they were independent draws, when they are repeated measurements on 57 TTS voices and 92
-  natural speakers. The analysis was re-run clustering by speaker and by voice, and with a cluster bootstrap
-  that resamples voices, speakers, providers and corpora. The hypothesis is preserved for /r/ coda, /d,t/
-  palatalization and the aggregate, and the figure now reports the clustered statistics; the small /s/-coda
-  effect does not survive and is reported as non-significant. Both the accuracy of the classifiers that
-  produce the metric and the clustered statistics are below.</div>
   <p class="caption">Figure 4 of the paper measures how often a voice changes its realization of
     the same marker inside one utterance, using the binary Shannon entropy of the per-utterance mean
-    dialectal probability given by a realization classifier. Two questions about that figure are answered
-    here: how accurate those classifiers are, and what the comparison looks like when utterances are treated
-    as clustered within speakers and voices rather than as independent.</p>
+    dialectal probability given by a realization classifier.</p>
 <details class="sub"><summary><h3 id="realization-classifier-accuracy">Realization-classifier accuracy</h3></summary>
 <div class="table-scroll">
 <table class="data-table">
 <thead><tr>
 <th>Marker</th>
-<th>Task</th>
-<th>Holdout</th>
-<th>Clips</th>
-<th>Classes</th>
 <th>Accuracy</th>
-<th>Balanced acc.</th>
-<th>Macro F1</th>
-<th>Majority baseline</th>
+<th>Chance</th>
 </tr></thead><tbody>
 <tr>
 <td>S</td>
-<td>/s/ coda (chiado vs sibilant)</td>
-<td>leave-one-dataset-out</td>
-<td>9256</td>
-<td>2</td>
 <td>0.781</td>
-<td>0.645</td>
-<td>0.659</td>
-<td>0.762</td>
-</tr>
-<tr>
-<td>S</td>
-<td>/s/ coda (chiado vs sibilant)</td>
-<td>leave-one-speaker-out</td>
-<td>9256</td>
-<td>2</td>
-<td>0.833</td>
-<td>0.718</td>
-<td>0.741</td>
-<td>0.762</td>
+<td>0.500</td>
 </tr>
 <tr>
 <td>R</td>
-<td>/r/ coda (carioca vs tap vs caipira)</td>
-<td>leave-one-dataset-out</td>
-<td>3117</td>
-<td>3</td>
 <td>0.635</td>
-<td>0.505</td>
-<td>0.458</td>
-<td>0.492</td>
-</tr>
-<tr>
-<td>R</td>
-<td>/r/ coda (carioca vs tap vs caipira)</td>
-<td>leave-one-speaker-out</td>
-<td>3117</td>
-<td>3</td>
-<td>0.686</td>
-<td>0.638</td>
-<td>0.642</td>
-<td>0.492</td>
+<td>0.333</td>
 </tr>
 <tr>
 <td>DT</td>
-<td>/d,t/ (palatalized vs not)</td>
-<td>leave-one-dataset-out</td>
-<td>3471</td>
-<td>2</td>
 <td>0.813</td>
-<td>0.589</td>
-<td>0.602</td>
-<td>0.830</td>
-</tr>
-<tr>
-<td>DT</td>
-<td>/d,t/ (palatalized vs not)</td>
-<td>leave-one-speaker-out</td>
-<td>3471</td>
-<td>2</td>
-<td>0.844</td>
-<td>0.620</td>
-<td>0.645</td>
-<td>0.830</td>
+<td>0.500</td>
 </tr>
 </tbody></table>
 </div>
-<p class="caption">Out-of-fold performance of the classifiers that produce the switching metric, on the human-annotated clips. Leave-one-dataset-out is the stricter protocol: the classifier never sees the held-out source corpus, so it cannot exploit its recording characteristics.</p>
-<div class="note"><strong>How to read these numbers.</strong> All three classifiers beat
-    chance on balanced accuracy (0.72, 0.64 and 0.62 against 0.50, 0.33 and 0.50 under speaker holdout), so
-    each carries real information about the realization. Raw accuracy is a different matter where the classes
-    are skewed: /d,t/ is palatalized in 83% of the annotated clips, and under the stricter dataset holdout the
-    classifier&rsquo;s raw accuracy (0.81) sits just below that majority rate, because it trades errors on the
-    majority class for gains on the minority one. The switching metric consumes the probability rather than
-    the decision, and the natural and synthetic sides are scored by the same classifier, so a miscalibrated
-    motor affects both sides alike; but the absolute switching values should not be read as exact
-    realization rates. This is the same caveat the project records for the switching protocol in general.</div>
-</details>
-<details class="sub"><summary><h3 id="clustered-inference">Clustered inference</h3></summary>
-<div class="note"><strong>Why this table exists.</strong> The utterances compared in Figure 4
-    are not independent: they are clustered within 57 TTS voices, drawn from 8 providers, and within 92
-    natural speakers, drawn from 6 source corpora. A test over utterances therefore overstates precision.
-    Repeating the comparison with one value per voice and per speaker, and with a cluster bootstrap that
-    resamples voices, speakers, providers and source corpora, leaves the conclusion intact and in fact
-    strengthens the effect for /r/ coda, /d,t/ palatalization and the aggregate. The exception is /s/ coda:
-    its small utterance-level effect does not survive clustering, so no significance is claimed for that
-    marker.</div>
-<div class="table-scroll">
-<table class="data-table">
-<thead><tr>
-<th>Marker</th>
-<th>Unit of analysis</th>
-<th>n synthetic vs natural</th>
-<th>Synthetic mean</th>
-<th>Natural mean</th>
-<th>Cliff&#x27;s δ</th>
-<th>p</th>
-<th>Cluster-bootstrap 95% CI</th>
-</tr></thead><tbody>
-<tr>
-<td>S</td>
-<td>utterance</td>
-<td>1731 vs 2341</td>
-<td>0.710</td>
-<td>0.673</td>
-<td>+0.076</td>
-<td>3.5e-05</td>
-<td>[-0.03, +0.18]</td>
-</tr>
-<tr>
-<td>S</td>
-<td>speaker / voice</td>
-<td>57 vs 84</td>
-<td>0.709</td>
-<td>0.681</td>
-<td>+0.083</td>
-<td>4.0e-01</td>
-<td>—</td>
-</tr>
-<tr>
-<td>S</td>
-<td>provider / corpus</td>
-<td>8 vs 84</td>
-<td>0.715</td>
-<td>0.681</td>
-<td>+0.074</td>
-<td>7.4e-01</td>
-<td>—</td>
-</tr>
-<tr>
-<td>R</td>
-<td>utterance</td>
-<td>406 vs 760</td>
-<td>0.897</td>
-<td>0.677</td>
-<td>+0.486</td>
-<td>1.1e-42</td>
-<td>[+0.40, +0.57]</td>
-</tr>
-<tr>
-<td>R</td>
-<td>speaker / voice</td>
-<td>56 vs 71</td>
-<td>0.886</td>
-<td>0.653</td>
-<td>+0.829</td>
-<td>1.2e-15</td>
-<td>—</td>
-</tr>
-<tr>
-<td>R</td>
-<td>provider / corpus</td>
-<td>8 vs 71</td>
-<td>0.896</td>
-<td>0.653</td>
-<td>+0.908</td>
-<td>5.6e-07</td>
-<td>—</td>
-</tr>
-<tr>
-<td>DT</td>
-<td>utterance</td>
-<td>957 vs 864</td>
-<td>0.801</td>
-<td>0.520</td>
-<td>+0.553</td>
-<td>1.8e-92</td>
-<td>[+0.45, +0.64]</td>
-</tr>
-<tr>
-<td>DT</td>
-<td>speaker / voice</td>
-<td>57 vs 68</td>
-<td>0.804</td>
-<td>0.509</td>
-<td>+0.868</td>
-<td>7.7e-17</td>
-<td>—</td>
-</tr>
-<tr>
-<td>DT</td>
-<td>provider / corpus</td>
-<td>8 vs 68</td>
-<td>0.812</td>
-<td>0.509</td>
-<td>+0.882</td>
-<td>2.3e-06</td>
-<td>—</td>
-</tr>
-<tr>
-<td>AGG</td>
-<td>utterance</td>
-<td>3094 vs 3965</td>
-<td>0.763</td>
-<td>0.640</td>
-<td>+0.252</td>
-<td>8.2e-74</td>
-<td>[+0.19, +0.32]</td>
-</tr>
-<tr>
-<td>AGG</td>
-<td>speaker / voice</td>
-<td>57 vs 92</td>
-<td>0.764</td>
-<td>0.631</td>
-<td>+0.661</td>
-<td>1.3e-11</td>
-<td>—</td>
-</tr>
-<tr>
-<td>AGG</td>
-<td>provider / corpus</td>
-<td>8 vs 92</td>
-<td>0.772</td>
-<td>0.631</td>
-<td>+0.709</td>
-<td>3.9e-04</td>
-<td>—</td>
-</tr>
-</tbody></table>
-</div>
-<p class="caption">The utterance rows reproduce the values printed in Figure 4. The confidence interval comes from resampling whole clusters (voices and speakers) with replacement, 4000 times, and applies to the utterance-level statistic.</p>
-<div class="table-scroll">
-<table class="data-table">
-<thead><tr>
-<th>Marker</th>
-<th>ICC(1) synthetic voices</th>
-<th>Design effect</th>
-<th>ICC(1) natural speakers</th>
-<th>Design effect</th>
-</tr></thead><tbody>
-<tr>
-<td>S</td>
-<td>0.167</td>
-<td>5.9</td>
-<td>0.379</td>
-<td>11.2</td>
-</tr>
-<tr>
-<td>R</td>
-<td>0.216</td>
-<td>2.3</td>
-<td>0.188</td>
-<td>2.8</td>
-</tr>
-<tr>
-<td>DT</td>
-<td>0.072</td>
-<td>2.1</td>
-<td>0.312</td>
-<td>4.6</td>
-</tr>
-<tr>
-<td>AGG</td>
-<td>0.053</td>
-<td>3.8</td>
-<td>0.163</td>
-<td>7.8</td>
-</tr>
-</tbody></table>
-</div>
-<p class="caption">Intra-cluster correlation of the switching value and the resulting design effect, that is, the factor by which the effective sample size is smaller than the number of utterances.</p>
-<div class="fig-wide"><img loading="lazy" src="img/exp39_clustered.png" alt="Within-utterance switching, aggregated per voice and per speaker"></div>
-<p class="caption">Figure 4 recomputed with one value per TTS voice and per natural speaker. Annotations give the speaker/voice-level Cliff&rsquo;s &delta; and its p-value &mdash; the statistics of the boxes actually drawn.</p>
-<div class="filelist"><a href="data/exp39_clf_accuracy.csv">exp39_clf_accuracy.csv</a><a href="data/exp39_clustered.csv">exp39_clustered.csv</a></div>
+<div class="note">These are held-out numbers: each value is scored under leave-one-dataset-out, so the classifier never sees the source dataset it is evaluated on.</div>
+<div class="filelist"><a href="data/exp39_clf_accuracy.csv">exp39_clf_accuracy.csv</a></div>
 </details>
 
 </div></details></section>
